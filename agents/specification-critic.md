@@ -25,6 +25,10 @@ The point is catching what the authoring pass missed — approach it adversarial
   non-functional constraint with a documented measurable form.
 - **Misclassification** — is this actually a `BUG` (implementation wrong, requirement fine)
   dressed up as a new requirement?
+- **Unexamined security/privacy surface** — does this requirement touch auth, credentials,
+  sessions, personal data, or access control while leaving `Security implications` or `Privacy
+  implications` blank or superficial? Flag it even if the feature "sounds simple" — "remember me"
+  and "add a share button" are exactly the kind of asks that read as trivial and aren't.
 
 ## Output
 

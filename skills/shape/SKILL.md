@@ -50,6 +50,19 @@ observable assertion. Prefer Given/When/Then or equivalent precision. Every acce
 needs at least one acceptance criterion, except explicit non-functional constraints with a
 documented measurable form.
 
+If every candidate criterion for a requirement is unresolvably vague ("easily", "fast",
+"polished"), do not invent a plausible-sounding concrete number or behavior to fill the gap. Keep
+`status: SHAPING` with the vagueness recorded under Unknowns, and present it to the human as an
+open question rather than advancing to `READY_FOR_REVIEW` with fabricated precision.
+
+## Requirement granularity
+
+If raw input bundles several outcomes that don't share a problem statement or acceptance criteria
+(e.g. "redesign onboarding, add dark mode, and add search" in one note), generate one requirement
+candidate per independent outcome, not a single requirement with unrelated sub-sections. Each must
+be separately approvable/rejectable by the human. This is the requirement-level form of the
+task-sizing invariant — small, independently reviewable units, one level up from tasks.
+
 ## Approval
 
 Present: what changed, why, what's new, what's superseded, unknowns, downstream impact. The human
