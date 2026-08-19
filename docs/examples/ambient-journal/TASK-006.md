@@ -1,7 +1,7 @@
 ---
 id: TASK-006
 title: Enforce dropped location signal is never read by generation
-status: READY
+status: VERIFIED
 
 implements: [REQ-001]
 design: []
@@ -13,7 +13,7 @@ risk: R2
 dependencies: []
 
 github_issue: null
-verification_run: null
+verification_run: RUN-toy-002
 
 created_at: "2026-09-03"
 ---
@@ -23,7 +23,12 @@ created_at: "2026-09-03"
 Exists specifically because of the REQ-001 v1→v2 supersession — enforces the drop rather than
 just relying on new code paths not calling location APIs. Any location-permission code path or
 stored location data from a prior build must be inert. No design dependency: this is backend
-enforcement, not UI, so it isn't blocked by TASK-009's DES-001-v2 wait.
+enforcement, not UI — unlike TASK-009 (retired), this task never depended on a design version.
+
+Implemented and verified for real: `tests/fixtures/toy-app/consent_store.py`,
+`tests/fixtures/toy-app/RUN-toy-002.md`, `tests/fixtures/toy-app/EVD-toy-002.md`. Real git
+worktree, real subagent-driven TDD, real independent verification — see `RUN-toy-002.md` for the
+full account.
 
 ## Verification plan
 
