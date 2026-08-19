@@ -1,7 +1,7 @@
 ---
 id: TASK-006
 title: Enforce dropped location signal is never read by generation
-status: VERIFIED
+status: MERGED
 
 implements: [REQ-001]
 design: []

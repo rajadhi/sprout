@@ -3,9 +3,10 @@
 Not a hypothetical example report — every number below was pulled from the actual files in this
 directory (`grep -H "^status:" *.md`, real dependency/size/risk fields).
 
-> Updated after `docs/examples/ambient-journal/GRAPH-REQ-001.md` caught and corrected a real
-> mistake: `TASK-009` was planned on an unchecked assumption and is now `RETIRED`, not `BLOCKED`.
-> See that file's "What changed and why" for the full account.
+> Updated twice since the first run: (1) `GRAPH-REQ-001.md` caught and corrected a real mistake —
+> `TASK-009` was planned on an unchecked assumption and is now `RETIRED`, not `BLOCKED`; (2)
+> `TASK-006` has actually been implemented, verified, and merged for real — the first Ambient
+> Journal task with a genuine `MERGED` status, not just a plan.
 
 ```
 Requirements
@@ -21,27 +22,26 @@ see GRAPH-REQ-001.md for the correction and why it couldn't just be silently fix
 
 Tasks
 9 total
-0 complete
-8 ready
+1 merged (TASK-006 -- real git worktree, real subagent TDD, real independent verification,
+real merged PR: github.com/rajadhi/sprout/pull/6)
+7 ready
 0 blocked
 1 retired (TASK-009 — its premise didn't hold, see GRAPH-REQ-001.md)
 0 verifying
 
 Verification
-0 verification runs recorded against any Ambient Journal task yet
-(tests/fixtures/toy-app has a real RUN-toy-001, modeled on TASK-003's AC-003-02, but it is a
-separate proof fixture -- TASK-003.md's own verification_run field is still null, and this report
-does not credit it as if TASK-003 were actually verified. First-pass % is not yet meaningful with
-zero real runs against this task set.)
+1 real verification run against an Ambient Journal task: RUN-toy-002 (TASK-006), PASS.
+RUN-toy-001 (modeled on TASK-003's AC-003-02) remains a separate proof fixture, not credited to
+TASK-003 itself -- that task's verification_run field is still null.
+First-pass rate: 1/1 (100%) on the one real run so far -- not yet a meaningful sample size.
 
 Next:
 TASK-001
 Reason: ties with TASK-002 on every scoring dimension (both S/R1, zero dependencies, both gate
-the same 3 downstream tasks -- TASK-003, TASK-004, TASK-005 all depend on both). TASK-006 is
-smaller (XS vs S) but blocks nothing downstream, so blocking_value/critical_path_weight outweigh
-its size advantage per the selection algorithm (skills/develop-next/SKILL.md). TASK-001 wins the
-tie against TASK-002 via the deterministic tie-break added during M3 pressure testing (lowest
-task ID) -- not an arbitrary pick.
+the same 3 downstream tasks -- TASK-003, TASK-004, TASK-005 all depend on both). TASK-001 wins
+the tie against TASK-002 via the deterministic tie-break added during M3 pressure testing
+(lowest task ID) -- not an arbitrary pick. (TASK-006, which previously factored into this
+comparison, is now MERGED and out of the ready pool.)
 ```
 
 ## How this was actually computed
