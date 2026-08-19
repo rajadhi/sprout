@@ -1,0 +1,14 @@
+./.sprout/approvals/.gitkeep
+./.sprout/graph/.gitkeep
+./.sprout/project.yaml
+./.sprout/runs/.gitkeep
+./.sprout/state/.gitkeep
+./CLAUDE.md
+./README.md
+./architecture/.gitkeep
+./designs/.gitkeep
+./evidence/.gitkeep
+./requirements/.gitkeep
+./tasks/.gitkeep
+./thoughts/.gitkeep
+./verification/.gitkeep
