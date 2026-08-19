@@ -106,7 +106,7 @@ analysis, not an execution topology. See §3.
 
 ---
 
-## 5. Command surface (v1: 8)
+## 5. Command surface (12)
 
 ```
 /sprout:init          bootstrap a project
@@ -120,10 +120,21 @@ analysis, not an execution topology. See §3.
 /sprout:graph         inspect artifact-graph relationships for a node; includes impact analysis
                        (what's affected by a change to this node, classified INVALIDATED /
                        NEEDS_REVIEW / LIKELY_UNAFFECTED / UNAFFECTED)
-/sprout:status         concise project state + next recommended task
+/sprout:status         concise project state + next recommended task, including loop-health
+                       metrics computed from real verification runs (see §5.1)
+/sprout:migrate        move a project's artifacts to a new Sprout schema_version, preserving
+                       pre-migration versions rather than reinterpreting them silently
+/sprout:release        VERIFIED/MERGED work → RELEASE_CANDIDATE → STAGING → PRODUCTION_APPROVAL
+                       → RELEASED, enforcing project.yaml's production_approval_policy
+/sprout:doctor         audit artifact-tree integrity: dangling references, stale version
+                       references, orphaned approvals, schema drift, out-of-band immutable edits
+/sprout:metrics        deeper loop-health breakdown than status's snapshot — trends, breakdowns
+                       by risk class/requirement, once enough verification-run history exists
 ```
 
-Backlog, not v1: `/sprout:migrate`, `/sprout:release`, `/sprout:doctor`, `/sprout:metrics`.
+The original v1 target was 8; `migrate`/`release`/`doctor`/`metrics` were originally scoped as
+backlog and built once real verification-run history existed to make them meaningful rather than
+speculative (see §9's milestone history for when each landed).
 
 ---
 
@@ -203,7 +214,11 @@ sprout/
 │   ├── develop-next/SKILL.md
 │   ├── verify/SKILL.md
 │   ├── graph/SKILL.md
-│   └── status/SKILL.md
+│   ├── status/SKILL.md
+│   ├── migrate/SKILL.md
+│   ├── release/SKILL.md
+│   ├── doctor/SKILL.md
+│   └── metrics/SKILL.md
 ├── agents/
 │   ├── specification-critic.md
 │   ├── ux-critic.md
@@ -258,11 +273,15 @@ protection configuration, merge policy enforcement via GitHub's native controls 
 overrides branch protection directly).
 *Exit:* an unverified task cannot merge through the normal GitHub path.
 
-Backlog after M4, not blocking v1 completeness: computer-use verification, `/sprout:migrate`,
-`/sprout:release`, `/sprout:doctor`, `/sprout:metrics`, self-dogfooding as an ongoing practice
-rather than a phase. Loop-health observability moved out of backlog once real verification runs
-existed to compute it from — see `skills/status/SKILL.md`'s loop-health section and
-`docs/examples/ambient-journal/METRICS.md` for a real computed report, not a hypothetical format.
+Backlog after M4, not blocking v1 completeness: computer-use verification, self-dogfooding as an
+ongoing practice rather than a phase. `/sprout:migrate`, `/sprout:release`, `/sprout:doctor`, and
+`/sprout:metrics` were originally scoped here too; all four are now built (§5) — `doctor` has a
+real dogfooded run (`docs/examples/ambient-journal/DOCTOR.md`), `migrate`/`release` are specified
+but not yet exercised (no schema change or release has happened yet to run them against for
+real), `metrics` extends `status`'s loop-health section once there's more run history than the
+current 2 real verification runs support. Loop-health observability itself moved out of backlog
+once real verification runs existed to compute it from — see `skills/status/SKILL.md`'s
+loop-health section and `docs/examples/ambient-journal/METRICS.md`.
 
 ---
 
