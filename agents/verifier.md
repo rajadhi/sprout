@@ -19,8 +19,14 @@ directly.
 ## Steps
 
 1. Read `artifacts/requirement.md` acceptance criteria and `artifacts/task.md` verification plan
-   directly — not the implementation agent's summary of them.
-2. Execute each required check from the task's `checks:` list.
+   directly — not the implementation agent's summary of them. If the task has a `design:`
+   reference, also read that design's specifics (Copy rules, accessibility section, edge states) —
+   an implementation can diverge from an already-approved design even when the design review
+   itself was clean, and that's a distinct failure surface from a requirement/acceptance-criteria
+   mismatch.
+2. Execute each required check from the task's `checks:` list. A required check with no
+   corresponding evidence captured is an automatic `FAIL` — never infer "probably fine" from other
+   checks having passed.
 3. For each check, capture evidence sufficient to prove the criterion, not just adjacent to it.
    `HTTP 200` alone is not proof of a semantic API requirement — pair with schema validation,
    required fields, persisted state. A screenshot must demonstrate the specific expected state,

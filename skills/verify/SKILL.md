@@ -22,9 +22,15 @@ that's the `verifier` agent's job, reading the requirement and acceptance criter
 3. Capture evidence for each check as `artifacts/evidence.md` records — redact secrets/PII per
    `project.yaml` evidence_policy before storing anything.
 4. Dispatch the `verifier` agent with the requirement, acceptance criteria, and captured evidence
-   (not the implementer's summary) to judge whether the evidence actually proves the criteria.
+   (not the implementer's summary) to judge whether the evidence actually proves the criteria. A
+   required check with no corresponding evidence at all is an automatic `FAIL` — never treat
+   "didn't run" as "passed because nothing contradicted it."
 5. Record the `artifacts/verification-run.md` — checks, evidence refs, verdict, failure class if
-   applicable. Never overwrite a prior run; a retry creates the next `RUN-XXXXXX`.
+   applicable. Never overwrite a prior run; a retry creates the next `RUN-XXXXXX`. A run's
+   `commit` field is the exact SHA the evidence was captured against — any later commit on the
+   same branch, however small the diff (including a review-fixup commit), needs its own run. An
+   agent judging a fixup "trivial enough to skip re-verification" is exactly the unearned
+   advancement `docs/protocol.md` §1's central rule forbids.
 6. Only on a `PASS` verdict does the task's state advance past `EVIDENCE_CAPTURE`.
 
 ## Evidence sufficiency bar
