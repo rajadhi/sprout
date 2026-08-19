@@ -38,10 +38,13 @@ per milestone. This repo dogfoods its own small-change invariant.
 
 ## Current milestone
 
-v1 complete — M1 through M4 all done (see `README.md` Status). Remaining work is backlog, not
-milestones: computer-use verification, loop-health observability/metrics, `/sprout:migrate`.
-Treat backlog items with the same proof standard as the milestones — pressure scenarios plus
-something real, not descriptions of intended behavior.
+v1 complete, backlog cleared — M1 through M4 plus all originally-backlog items done (see
+`README.md` Status). Genuinely remaining: `/sprout:migrate`/`/sprout:release` are specified but
+unexercised (nothing to run them against yet), native iOS/macOS computer-use verification is
+proven possible but not executed end-to-end. Treat any future work with the same proof standard
+established throughout: pressure scenarios plus something real, not descriptions of intended
+behavior — and when a "real" proof surfaces a mistake in earlier work (see `TASK-009`'s
+retirement), correct it through a new artifact, not a rewrite of history.
 
 ## Branch protection is live
 
