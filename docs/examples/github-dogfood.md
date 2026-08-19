@@ -7,7 +7,8 @@ GitHub. Applied with explicit scope approval before touching any live setting.
 ## Branch protection (applied to `main`, github.com/rajadhi/sprout)
 
 ```
-required_status_checks: {strict: true, contexts: [validate-structure, toy-app-tests]}
+required_status_checks: {strict: true, contexts: [validate-structure, toy-app-tests, hook-tests,
+                                                    risk-approval-check]}
 required_pull_request_reviews: {required_approving_review_count: 0}
 enforce_admins: false
 allow_force_pushes: false
@@ -15,12 +16,21 @@ allow_deletions: false
 required_conversation_resolution: true
 ```
 
+(`hook-tests` and `risk-approval-check` were added after the immutability hook and the R3/R4
+approval gate landed — this reflects the current ruleset, not the original M4 pass; see below.)
+
 Matches `docs/architecture.md` §7's minimum recommended ruleset: required PR, required CI status
-checks (the two real jobs from `.github/workflows/ci.yml`), no force-push, no deletion, required
-conversation resolution. `enforce_admins: false` and `required_approving_review_count: 0` are a
-deliberate choice for a solo-maintainer repo — a PR is still required to merge, but the owner
-isn't blocked waiting on a second approver that doesn't exist. `enforce_admins: true` and a
-non-zero review count are the natural next step once there's more than one maintainer.
+checks, no force-push, no deletion, required conversation resolution. `enforce_admins: false` and
+`required_approving_review_count: 0` are a deliberate choice for a solo-maintainer repo — a PR is
+still required to merge, but the owner isn't blocked waiting on a second approver that doesn't
+exist. `enforce_admins: true` and a non-zero review count are the natural next step once there's
+more than one maintainer.
+
+**The review-count-0 gap is closed for R3/R4 specifically**, without needing a second maintainer:
+`risk-approval-check` (`.github/scripts/check_risk_approval.py`) is a required status check that
+fails CI if any task claims `risk: R3`/`R4` without a real `APR-*.md` approval record naming it.
+This doesn't replace human judgment (a human still writes the approval), but it does mean the
+*absence* of one is now caught by GitHub, not just by convention.
 
 This is the real enforcement mechanism behind M4's exit criterion: an unverified task cannot merge
 through the normal GitHub path, because merging now requires the two CI status checks to pass —
