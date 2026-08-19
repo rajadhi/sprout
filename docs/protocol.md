@@ -258,8 +258,11 @@ protection configuration, merge policy enforcement via GitHub's native controls 
 overrides branch protection directly).
 *Exit:* an unverified task cannot merge through the normal GitHub path.
 
-Backlog after M4, not blocking v1 completeness: computer-use verification, observability/loop-
-health metrics, `/sprout:migrate`, self-dogfooding as an ongoing practice rather than a phase.
+Backlog after M4, not blocking v1 completeness: computer-use verification, `/sprout:migrate`,
+`/sprout:release`, `/sprout:doctor`, `/sprout:metrics`, self-dogfooding as an ongoing practice
+rather than a phase. Loop-health observability moved out of backlog once real verification runs
+existed to compute it from — see `skills/status/SKILL.md`'s loop-health section and
+`docs/examples/ambient-journal/METRICS.md` for a real computed report, not a hypothetical format.
 
 ---
 
