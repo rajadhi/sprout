@@ -39,3 +39,15 @@ jobs:
           python-version: "3.x"
       - name: Run immutability hook regression tests
         run: python3 -m unittest tests.hooks.test_check_immutable_artifacts -v
+
+  risk-approval-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run R3/R4 approval-check regression tests
+        run: python3 -m unittest tests.ci.test_check_risk_approval -v
+      - name: Check every R3/R4 task has a real approved approval record
+        run: python3 .github/scripts/check_risk_approval.py

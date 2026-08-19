@@ -29,6 +29,12 @@ dependencies: []
 
 github_issue: null
 verification_run: null       # RUN-XXXXXX once verified
+approval_ref: null            # APR-XXXXX -- required once risk is R3 or R4 (project.yaml
+                               # autonomy_policy: human_required/human_controlled). Enforced by
+                               # CI (.github/scripts/check_risk_approval.py), not just documented
+                               # -- a required status check, since required_pull_request_reviews
+                               # alone can't be relied on for a solo-maintainer repo where the
+                               # owner can bypass branch protection.
 
 created_at: unknown
 ---
