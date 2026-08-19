@@ -65,8 +65,17 @@ advance it because the required evidence and policy conditions are satisfied.**
 
 ## Status
 
-M1 (protocol + scaffolding) in progress. See [docs/protocol.md §9](docs/protocol.md) for the
-milestone plan.
+- **M1 (protocol + scaffolding) — done.** Plugin manifest, 8 skills, 6 agents, 9 artifact
+  templates, protocol/architecture/getting-started docs.
+- **M2 (shape + design loop) — done.** 8 pressure scenarios in `tests/scenarios/` (5 shape, 3
+  design), 4 real gaps found and fixed. Dogfooded end to end against a real fixture —
+  [docs/examples/ambient-journal](docs/examples/ambient-journal) — proving immutable requirement
+  splitting, critic-gated design approval, and a real supersession (v1 → v2) without touching
+  history.
+- **M3 (plan → develop-next → verify, Superpowers-integrated) — not started.**
+- **M4 (GitHub projection + merge policy) — not started.**
+
+See [docs/protocol.md §9](docs/protocol.md) for the full milestone plan.
 
 ## License
 

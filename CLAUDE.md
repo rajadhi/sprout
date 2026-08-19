@@ -38,7 +38,8 @@ per milestone. This repo dogfoods its own small-change invariant.
 
 ## Current milestone
 
-Building M1 (protocol + scaffolding, no orchestration logic) per `docs/protocol.md` §9. Do not
-jump ahead to M2+ behavior (skill pressure tests, actual requirement/design workflows against a
-real downstream project) until M1's exit criterion is met: a human can read this repo and
-understand the complete lifecycle.
+M1 and M2 done (see `README.md` Status). Next is M3 (`plan → develop-next → verify`, integrated
+with Superpowers) per `docs/protocol.md` §9. Do not jump ahead to M4 (GitHub Actions, branch
+protection) until M3's exit criterion is met: a task cannot reach `VERIFIED` without a valid
+evidence bundle, proven the same way M2 was — pressure scenarios plus a real dogfooded fixture,
+not just a description of intended behavior.
