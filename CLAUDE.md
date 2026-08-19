@@ -38,8 +38,17 @@ per milestone. This repo dogfoods its own small-change invariant.
 
 ## Current milestone
 
-M1, M2, M3 done (see `README.md` Status). Next is M4 (GitHub projection + merge policy) per
-`docs/protocol.md` §9. Do not implement GitHub Actions/branch-protection config as a description
-only — M4's exit criterion ("an unverified task cannot merge through the normal GitHub path")
-needs the same proof standard M2/M3 used: pressure scenarios plus something real wherever
-feasible, not just markdown describing intended behavior.
+v1 complete — M1 through M4 all done (see `README.md` Status). Remaining work is backlog, not
+milestones: computer-use verification, loop-health observability/metrics, `/sprout:migrate`.
+Treat backlog items with the same proof standard as the milestones — pressure scenarios plus
+something real, not descriptions of intended behavior.
+
+## Branch protection is live
+
+`main` on github.com/rajadhi/sprout has real branch protection (required PR, required CI status
+checks, no force-push — see `docs/examples/github-dogfood.md`). Direct pushes from the repo owner
+still succeed (`enforce_admins: false`, a deliberate solo-maintainer gap, not a bug) but every
+push now shows a "Bypassed rule violations" warning when it does. Prefer opening a PR for future
+changes to actually exercise the merge policy Sprout itself now enforces, rather than relying on
+the owner-bypass out of habit — same "don't take the easy path around your own invariant" spirit
+as the rest of this file.

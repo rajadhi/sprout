@@ -81,9 +81,19 @@ advance it because the required evidence and policy conditions are satisfied.**
   `verify` for real (not simulated) in
   [tests/fixtures/toy-app](tests/fixtures/toy-app) — an actual RED test, an actual GREEN
   implementation, real captured command output as evidence, a real verdict.
-- **M4 (GitHub projection + merge policy) — not started.**
+- **M4 (GitHub projection + merge policy) — done.** Label mechanics and issue-creation commands
+  documented precisely in `docs/architecture.md` §7. Dogfooded for real against this repo, not
+  simulated: real branch protection applied to `main` (required PR, required CI status checks,
+  no force-push, no deletion, required conversation resolution — see
+  [docs/examples/github-dogfood.md](docs/examples/github-dogfood.md)), a real
+  [CI workflow](.github/workflows/ci.yml) that actually runs and passes, and a real throwaway
+  issue proving label creation, add/remove state transitions, and close-not-delete cleanup.
 
-See [docs/protocol.md §9](docs/protocol.md) for the full milestone plan.
+**v1 complete** — all 4 milestones done, each with pressure scenarios where applicable and a real
+dogfooded proof, not just descriptions of intended behavior. See
+[docs/protocol.md §9](docs/protocol.md) for the milestone definitions and backlog (computer-use
+verification, loop-health metrics, `/sprout:migrate`) that remain deliberately out of scope for
+v1.
 
 ## License
 
