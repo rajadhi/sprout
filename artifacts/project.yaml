@@ -1,0 +1,68 @@
+# Sprout project profile.
+# Created by /sprout:init. Lives at .sprout/project.yaml in the downstream repo.
+# Unknown values are allowed — write `unknown`, never invent a value.
+
+schema_version: 1
+
+name: unknown
+purpose: unknown
+
+platforms: []            # e.g. [web, macOS, iOS]
+technology_stack: unknown
+repository: unknown
+deployment_environments: []   # e.g. [preview, staging, production]
+testing_approach: unknown
+accessibility_target: unknown  # e.g. "WCAG 2.2 AA"
+security_privacy_constraints: unknown
+
+# --- Policy (§40-41 of docs/protocol.md) ---
+# Risk classes gate how much autonomy an agent has without a human.
+# Override per-project; these are the shipped defaults.
+autonomy_policy:
+  R0:
+    description: documentation / trivial changes
+    approval: autonomous
+  R1:
+    description: isolated low-risk behaviour
+    approval: autonomous_after_verification
+  R2:
+    description: meaningful business logic / data behaviour
+    approval: autonomous_implementation_plus_independent_verification
+  R3:
+    description: security / privacy / auth / major architecture / migration
+    approval: human_required
+  R4:
+    description: destructive production or high-consequence operations
+    approval: human_controlled
+
+# A task is too large when it has multiple unrelated outcomes, needs multiple
+# independent review decisions, or can't be verified with one coherent plan.
+task_sizing_policy:
+  sizes: [XS, S, M, L, XL]
+  decompose_at: L          # L and XL should normally be decomposed
+  autonomous_ceiling: L    # XL must never be accepted for autonomous execution
+
+# Which verification checks are mandatory by default; a task's own
+# verification plan can add checks but not silently drop mandatory ones.
+verification_policy:
+  mandatory_checks: [lint, unit]
+  conditional_checks: [integration, contract, build, deploy, runtime, computer_use, visual, review]
+
+# Evidence must never trade privacy for auditability — always redact.
+evidence_policy:
+  always_redact: [api_keys, bearer_tokens, cookies, passwords, credentials, sensitive_personal_data]
+  minimum_required: task_defines   # each task's verification plan states its own minimum
+
+# A change can merge only when all of these hold.
+merge_policy:
+  requires:
+    - task_state_verified
+    - required_evidence_exists
+    - required_ci_checks_pass
+    - required_approvals_exist
+    - branch_protection_passes
+
+production_approval_policy: human_required   # or: autonomous_with_R0_R1_only, etc.
+
+created_at: unknown
+sprout_version: 0.1.0
