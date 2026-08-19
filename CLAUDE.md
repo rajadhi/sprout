@@ -38,8 +38,8 @@ per milestone. This repo dogfoods its own small-change invariant.
 
 ## Current milestone
 
-M1 and M2 done (see `README.md` Status). Next is M3 (`plan → develop-next → verify`, integrated
-with Superpowers) per `docs/protocol.md` §9. Do not jump ahead to M4 (GitHub Actions, branch
-protection) until M3's exit criterion is met: a task cannot reach `VERIFIED` without a valid
-evidence bundle, proven the same way M2 was — pressure scenarios plus a real dogfooded fixture,
-not just a description of intended behavior.
+M1, M2, M3 done (see `README.md` Status). Next is M4 (GitHub projection + merge policy) per
+`docs/protocol.md` §9. Do not implement GitHub Actions/branch-protection config as a description
+only — M4's exit criterion ("an unverified task cannot merge through the normal GitHub path")
+needs the same proof standard M2/M3 used: pressure scenarios plus something real wherever
+feasible, not just markdown describing intended behavior.

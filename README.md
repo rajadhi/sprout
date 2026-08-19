@@ -72,7 +72,15 @@ advance it because the required evidence and policy conditions are satisfied.**
   [docs/examples/ambient-journal](docs/examples/ambient-journal) — proving immutable requirement
   splitting, critic-gated design approval, and a real supersession (v1 → v2) without touching
   history.
-- **M3 (plan → develop-next → verify, Superpowers-integrated) — not started.**
+- **M3 (plan → develop-next → verify, Superpowers-integrated) — done.** 11 pressure scenarios (6
+  develop-next, 5 verify), 7 real gaps found and fixed — including a genuine spec inconsistency
+  (`checks:` never had a `security` type despite evidence always having `SECURITY_RESULT`).
+  Dogfooded `plan` against the Ambient Journal requirements into 9 vertical-slice tasks + 1 ADR
+  (`architecture-reviewer`, wired in M1, dispatched for real). `plan`'s dependency gate correctly
+  withheld `READY` on a task blocked by a missing design version. Then dogfooded `develop-next` +
+  `verify` for real (not simulated) in
+  [tests/fixtures/toy-app](tests/fixtures/toy-app) — an actual RED test, an actual GREEN
+  implementation, real captured command output as evidence, a real verdict.
 - **M4 (GitHub projection + merge policy) — not started.**
 
 See [docs/protocol.md §9](docs/protocol.md) for the full milestone plan.
