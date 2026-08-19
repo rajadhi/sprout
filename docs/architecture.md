@@ -145,6 +145,15 @@ or the GitHub UI: required PR before merge, required status checks (the CI workf
 required conversation resolution, no force-push, no branch deletion by non-admins. See
 `.github/workflows/` for the checks branch protection should require.
 
+**R3/R4 approval, given real teeth.** `required_pull_request_reviews.required_approving_review_count`
+can't meaningfully enforce docs/protocol.md §40's "R3/R4 needs human approval" on a solo-maintainer
+repo — there's no second reviewer, and `enforce_admins: false` lets the owner bypass branch
+protection outright (github-dogfood.md documents this real gap). Instead of leaving R3/R4 approval
+trust-based, `.github/scripts/check_risk_approval.py` makes it a required status check: every task
+file with `risk: R3` or `risk: R4` must carry an `approval_ref` pointing at a real `APR-*.md` that
+says `decision: approved` and names that task — checked deterministically, whole-repo, same style
+as `validate_structure.py`. A task claiming R3/R4 without one fails CI regardless of who's pushing.
+
 ## 8. CI/CD
 
 GitHub Actions is the default substrate — no custom CI engine. Two distinct pipelines, don't
