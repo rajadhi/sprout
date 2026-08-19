@@ -65,35 +65,44 @@ advance it because the required evidence and policy conditions are satisfied.**
 
 ## Status
 
-- **M1 (protocol + scaffolding) — done.** Plugin manifest, 8 skills, 6 agents, 9 artifact
-  templates, protocol/architecture/getting-started docs.
-- **M2 (shape + design loop) — done.** 8 pressure scenarios in `tests/scenarios/` (5 shape, 3
-  design), 4 real gaps found and fixed. Dogfooded end to end against a real fixture —
-  [docs/examples/ambient-journal](docs/examples/ambient-journal) — proving immutable requirement
-  splitting, critic-gated design approval, and a real supersession (v1 → v2) without touching
-  history.
-- **M3 (plan → develop-next → verify, Superpowers-integrated) — done.** 11 pressure scenarios (6
-  develop-next, 5 verify), 7 real gaps found and fixed — including a genuine spec inconsistency
-  (`checks:` never had a `security` type despite evidence always having `SECURITY_RESULT`).
-  Dogfooded `plan` against the Ambient Journal requirements into 9 vertical-slice tasks + 1 ADR
-  (`architecture-reviewer`, wired in M1, dispatched for real). `plan`'s dependency gate correctly
-  withheld `READY` on a task blocked by a missing design version. Then dogfooded `develop-next` +
-  `verify` for real (not simulated) in
-  [tests/fixtures/toy-app](tests/fixtures/toy-app) — an actual RED test, an actual GREEN
-  implementation, real captured command output as evidence, a real verdict.
-- **M4 (GitHub projection + merge policy) — done.** Label mechanics and issue-creation commands
-  documented precisely in `docs/architecture.md` §7. Dogfooded for real against this repo, not
-  simulated: real branch protection applied to `main` (required PR, required CI status checks,
-  no force-push, no deletion, required conversation resolution — see
-  [docs/examples/github-dogfood.md](docs/examples/github-dogfood.md)), a real
-  [CI workflow](.github/workflows/ci.yml) that actually runs and passes, and a real throwaway
-  issue proving label creation, add/remove state transitions, and close-not-delete cleanup.
+**v1 complete, then pushed past v1 into every remaining backlog item.** 12 skills, 6 agents, 9
+artifact templates, 20 pressure scenarios, 1 real enforcement hook, 4 required CI checks, 19
+GitHub labels, 14 merged PRs — every one gated by real CI on a real branch-protected repo, not a
+description of what would happen.
 
-**v1 complete** — all 4 milestones done, each with pressure scenarios where applicable and a real
-dogfooded proof, not just descriptions of intended behavior. See
-[docs/protocol.md §9](docs/protocol.md) for the milestone definitions and backlog (computer-use
-verification, loop-health metrics, `/sprout:migrate`) that remain deliberately out of scope for
-v1.
+- **M1–M4 (protocol, shape/design, plan/develop-next/verify, GitHub projection) — done.** See
+  git history for the full account; the short version: every milestone shipped with pressure
+  scenarios where applicable and a real dogfooded proof, not just prose. Real gaps found and
+  fixed at every stage, including a genuine spec inconsistency (`checks:` never had a `security`
+  type) and a real mistake in the framework's own reasoning (`TASK-009` retired after re-running
+  `graph`'s impact analysis found its premise was false — see
+  [GRAPH-REQ-001.md](docs/examples/ambient-journal/GRAPH-REQ-001.md)).
+- **Immutability hook — real, not decorative.** `hooks/check-immutable-artifacts.py` genuinely
+  blocks editing approved requirements/designs/decisions and any approval/verification/evidence
+  record — confirmed by trying, including during the `TASK-009` correction, which had to route
+  around it rather than through it.
+- **Real GitHub enforcement.** Branch protection requires 4 CI checks (`validate-structure`,
+  `toy-app-tests`, `hook-tests`, `risk-approval-check`) before merge — the last one closes a real
+  gap: R3/R4 "human approval required" now has GitHub-enforced teeth
+  (`.github/scripts/check_risk_approval.py`), not just trust. All 19 `sprout:*` labels exist for
+  real on this repo.
+- **Real Superpowers-integrated execution.** `TASK-006` traveled `READY → VERIFIED → MERGED` for
+  real: a real `git worktree`, a dispatched subagent doing real TDD (honestly reporting when its
+  first test scenario didn't actually produce RED and adding a real adversarial one instead), an
+  independent verifier re-running the suite rather than trusting the report, a real merged PR.
+- **Backlog cleared.** `/sprout:migrate`, `/sprout:release`, `/sprout:doctor`, `/sprout:metrics`
+  all built (`doctor` dogfooded for real —
+  [DOCTOR.md](docs/examples/ambient-journal/DOCTOR.md)). Loop-health metrics computed from real
+  verification runs, honestly caveated for sample size and timestamp precision
+  ([METRICS.md](docs/examples/ambient-journal/METRICS.md)). Computer-use/runtime verification's
+  mechanism proven for real via a browser tool
+  ([tests/fixtures/toy-ui](tests/fixtures/toy-ui)) — explicitly not overclaimed as native
+  iOS/macOS verification, which Ambient Journal's actual UI tasks would need.
+
+See [docs/protocol.md §9](docs/protocol.md) for the milestone definitions. Genuinely remaining:
+`/sprout:migrate`/`/sprout:release` are specified but unexercised (no schema change or release
+has happened yet to run them against), and native iOS/macOS computer-use verification is proven
+possible but not yet executed end-to-end.
 
 ## License
 
