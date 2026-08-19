@@ -33,9 +33,13 @@ and runtime screenshots rather than skipping the visual/edge-state review.
 
 ## Approval gate
 
-Human approval happens only when: design quality gate passes AND acceptance criteria are
-represented AND accessibility review passes. The human then responds APPROVE / REQUEST CHANGES /
-REJECT. Approved design versions are immutable — a later change creates the next `DES-XXX` version.
+Human approval happens only when, concretely: `ux-critic` reports zero open findings on the
+current candidate AND `accessibility-critic` reports zero open findings on the current candidate
+AND every acceptance criterion on the requirement(s) this design implements is visibly represented
+in the design. "Ran the critique step once" is not the same as "passes" — a finding that revision
+didn't actually resolve blocks presentation until re-critiqued clean. The human then responds
+APPROVE / REQUEST CHANGES / REJECT. Approved design versions are immutable — a later change
+creates the next `DES-XXX` version.
 
 ## Must not
 

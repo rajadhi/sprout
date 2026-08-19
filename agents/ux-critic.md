@@ -19,7 +19,8 @@ as correct just because it's stated — judge the actual flow.
   number of steps?
 - **Interaction ambiguity** — any point where the next action isn't obvious?
 - **Edge-state coverage** — empty, loading, and error states present and coherent, not
-  afterthoughts?
+  afterthoughts. A blank or placeholder ("TBD") edge-state section is itself a finding, not a
+  pass — absence and thin filler get the same verdict.
 - **Consistency** — does this match the existing design system, or silently diverge without
   justification?
 - **Acceptance criteria representation** — does the design actually address every acceptance
