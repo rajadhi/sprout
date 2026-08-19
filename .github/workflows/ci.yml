@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate plugin manifest and skill/agent frontmatter
+        run: python3 .github/scripts/validate_structure.py
+
+  toy-app-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/fixtures/toy-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run toy-app unit tests
+        run: python3 -m unittest test_consent_store.py -v

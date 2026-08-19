@@ -129,9 +129,23 @@ required conversation resolution, no force-push, no branch deletion by non-admin
 
 ## 8. CI/CD
 
-GitHub Actions is the default substrate — no custom CI engine. A typical PR flow: lint → typecheck
-→ unit → integration → build → security → deploy preview → runtime verification → evidence
-capture → status check. Arrives with M4; not part of M1 scaffolding.
+GitHub Actions is the default substrate — no custom CI engine. Two distinct pipelines, don't
+conflate them:
+
+**Sprout's own repo** (`.github/workflows/ci.yml`) has no application code to lint/build/deploy —
+it validates the plugin itself: `validate-structure` runs
+`.github/scripts/validate_structure.py`, a small deterministic script (checks plugin manifest is
+valid JSON, every skill/agent has required frontmatter — the kind of check §5 calls a hook
+candidate, implemented here as a CI step since it needs to run on every push/PR, not just
+locally); `toy-app-tests` runs the real unit tests in `tests/fixtures/toy-app`. Both required
+status checks for branch protection.
+
+**Downstream projects Sprout is installed into** get the fuller pipeline described in the
+original design brief and still the right default to recommend: lint → typecheck → unit →
+integration → build → security → deploy preview → runtime verification → evidence capture →
+status check. Sprout doesn't generate this workflow file for a project automatically in v1 (that
+would mean assuming a specific language/build toolchain, which §10 explicitly rules out) — `init`
+documents the recommended shape, the project wires the actual commands for its own stack.
 
 ## 9. Computer-use
 
