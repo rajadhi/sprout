@@ -34,7 +34,7 @@ created_at: unknown
 
 <!-- flat list of required checks for this task — not every task needs every
      check. Pick from: lint, unit, integration, contract, build, deploy,
-     runtime, computer_use, visual, review -->
+     security, runtime, computer_use, visual, review -->
 
 checks:
   -

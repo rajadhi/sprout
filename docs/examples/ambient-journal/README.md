@@ -1,14 +1,14 @@
-# Ambient Journal — dogfooded shape + design loop
+# Ambient Journal — dogfooded shape + design + plan loop
 
-This is not a spec to build Ambient Journal — it's M2's proof artifact, demonstrating
-`docs/protocol.md`'s M2 exit criterion with real files instead of a description of one:
+This is not a spec to build Ambient Journal — it's M2 and M3's proof artifact, demonstrating
+`docs/protocol.md`'s exit criteria with real files instead of a description of one. M2's:
 
 > messy raw input becomes an approved, immutable requirement + design version; changing it
 > produces a new version without touching history.
 
-Every file here was produced by actually walking `skills/shape/SKILL.md` and
-`skills/design/SKILL.md` against a real input, including the fixes those pressure scenarios
-(`tests/scenarios/shape/`, `tests/scenarios/design/`) surfaced.
+Every file here was produced by actually walking `skills/shape/SKILL.md`,
+`skills/design/SKILL.md`, and `skills/plan/SKILL.md` against real input, including the fixes
+those pressure scenarios (`tests/scenarios/`) surfaced.
 
 ## Walkthrough
 
@@ -35,9 +35,22 @@ Every file here was produced by actually walking `skills/shape/SKILL.md` and
      deleting the location-related acceptance criteria from history.
 8. **[APR-00003](APR-00003.md)** — approval for v2, including the impact-analysis note that
    `DES-001` needs a v2 too (`NEEDS_REVIEW`, not `INVALIDATED` — the flow structure holds, only
-   the location-specific consent prompt needs removal). That next design version isn't included
-   here — it's the natural next step, left undone on purpose so this fixture stays a proof of the
-   shape→design→supersession loop, not a full Ambient Journal build.
+   the location-specific consent prompt needs removal).
+9. **plan decomposes REQ-001-v2/REQ-002/REQ-003 + DES-001** into 9 vertical-slice tasks
+   (**[TASK-001](TASK-001.md)** through **[TASK-009](TASK-009.md)**), by user-visible behavior
+   (consent per signal, empty state, draft generation, edit-persists) rather than technical layer.
+   - Decomposition surfaced a real consequential decision — how the end-of-day trigger fires
+     reliably on iOS — that wasn't covered by an existing ADR. Per `plan`'s rule 4, drafted
+     **[ADR-001](ADR-001.md)** and dispatched `architecture-reviewer` before treating it as
+     settled, approved as **[APR-00004](APR-00004.md)**. `TASK-005` implements the decision.
+   - `plan`'s rule 9 ("mark `READY` only when prerequisites are satisfied") holds for real:
+     **[TASK-009](TASK-009.md)** is `BLOCKED`, not `READY` — it needs `DES-001-v2`, which doesn't
+     exist yet, so there's nothing to implement or verify against. `TASK-006` (the backend
+     enforcement half of the same v1→v2 fallout) has no such dependency and *is* `READY`.
+
+That next design version (`DES-001-v2`) and `TASK-009`'s unblock are the natural next step, left
+undone on purpose so this fixture stays a proof of the loop rather than a full Ambient Journal
+build.
 
 ## What this proves
 
@@ -49,8 +62,16 @@ Every file here was produced by actually walking `skills/shape/SKILL.md` and
 - The approval-gate fix actually changes what "ready for human approval" means — DES-001 shows its
   own pre-approval critic findings and their resolution, not just a clean final draft with no
   trace of the gate having done anything.
+- `plan`'s dependency gate actually withholds `READY` when a real prerequisite is missing
+  (`TASK-009`), rather than marking everything `READY` because it's been decomposed.
+- The `architecture-reviewer` agent — wired into `plan` after M1 found it was unused — actually
+  gets dispatched for a real consequential decision (`ADR-001`), not just referenced in docs.
+- Dogfooding surfaced a real spec gap: the `checks:` enumeration never had a `security` value even
+  though `evidence.md` has always had `SECURITY_RESULT` — found because `TASK-006` genuinely
+  needed a security check. Fixed across `artifacts/project.yaml`, `artifacts/task.md`,
+  `skills/verify/SKILL.md`, and `docs/protocol.md`.
 
 ## What this does not prove
 
-This fixture does not exercise `plan`, `develop-next`, or `verify` — those are M3. No tasks, no
-code, no verification runs exist for Ambient Journal yet, and shouldn't until M3 starts.
+This fixture does not yet exercise `develop-next` or `verify` — no branch, no code, no
+verification run exists for any of these tasks. That's the remainder of M3.

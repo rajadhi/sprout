@@ -17,7 +17,7 @@ that's the `verifier` agent's job, reading the requirement and acceptance criter
 ## Steps
 
 1. Load the task's verification plan and the requirement's acceptance criteria.
-2. Run each required check (lint, unit, integration, contract, build, deploy, runtime,
+2. Run each required check (lint, unit, integration, contract, build, deploy, security, runtime,
    computer_use, visual, review — only the ones the task's plan actually lists).
 3. Capture evidence for each check as `artifacts/evidence.md` records — redact secrets/PII per
    `project.yaml` evidence_policy before storing anything.

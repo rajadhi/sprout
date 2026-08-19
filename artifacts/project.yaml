@@ -46,7 +46,7 @@ task_sizing_policy:
 # verification plan can add checks but not silently drop mandatory ones.
 verification_policy:
   mandatory_checks: [lint, unit]
-  conditional_checks: [integration, contract, build, deploy, runtime, computer_use, visual, review]
+  conditional_checks: [integration, contract, build, deploy, security, runtime, computer_use, visual, review]
 
 # Evidence must never trade privacy for auditability — always redact.
 evidence_policy:
