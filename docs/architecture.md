@@ -81,10 +81,51 @@ sprout:risk:R0 .. sprout:risk:R4
 sprout:size:XS   sprout:size:S   sprout:size:M   sprout:size:L   sprout:size:XL
 ```
 
-Branch protection (required PR, required CI, no force-push, conversation resolution) is
-recommended/configured by Sprout but enforced entirely by GitHub's native controls — no skill may
+### Label mechanics
+
+Labels must exist before an issue can carry them — `gh issue create --label` fails silently-ish
+(a clear error, but a real one) on a label that was never created. `init` (or `plan`'s first run
+in a project) creates the full set idempotently via `gh label create --force`, which both creates
+missing labels and is safe to re-run:
+
+| Label | Color | Description |
+|---|---|---|
+| `sprout:type:product` | `#1D76DB` | Product-facing requirement |
+| `sprout:type:ux` | `#8E44AD` | UX/design-facing requirement |
+| `sprout:type:engineering` | `#5D6D7E` | Engineering-only, no product-facing change |
+| `sprout:type:architecture` | `#154360` | Architecture/ADR-driven |
+| `sprout:state:ready` | `#0E8A16` | Task ready for `develop-next` |
+| `sprout:state:in-progress` | `#FBCA04` | Task claimed, being implemented |
+| `sprout:state:verification` | `#D93F0B` | Task in verification |
+| `sprout:state:blocked` | `#B60205` | Task blocked on a prerequisite |
+| `sprout:state:verified` | `#0B6E4F` | Task verified, awaiting merge |
+| `sprout:risk:R0` .. `sprout:risk:R4` | green → red gradient | Autonomy risk class, see `project.yaml` |
+| `sprout:size:XS` .. `sprout:size:XL` | light → dark gray | Task size |
+
+`plan` step 10, concretely:
+
+```bash
+gh issue create --title "$TASK_TITLE" \
+  --body "Sprout task: $TASK_ID. Canonical artifact: artifacts/task.md (or the downstream
+project's tasks/$TASK_ID.md). This issue is a projection — do not treat its text as the
+source of truth; edit the task artifact and re-sync instead." \
+  --label "sprout:type:$TYPE,sprout:state:ready,sprout:risk:$RISK,sprout:size:$SIZE"
+```
+
+Record the returned issue number on the task artifact's `github_issue:` field. On a later state
+change (`READY` → `IN_PROGRESS` → ...), update labels via `gh issue edit --add-label
+sprout:state:X --remove-label sprout:state:Y` — never close and recreate the issue, and never
+push task-artifact content into the issue body as a rewrite (the issue body is set once at
+creation; ongoing detail lives in the canonical artifact, the issue just links to it).
+
+### Branch protection
+
+Recommended/configured by Sprout but enforced entirely by GitHub's native controls — no skill may
 override branch protection directly. This is the enforcement boundary: an unverified task cannot
-merge through the normal GitHub path (M4 exit criterion).
+merge through the normal GitHub path (M4 exit criterion). Minimum recommended ruleset via `gh api`
+or the GitHub UI: required PR before merge, required status checks (the CI workflow's jobs),
+required conversation resolution, no force-push, no branch deletion by non-admins. See
+`.github/workflows/` for the checks branch protection should require.
 
 ## 8. CI/CD
 

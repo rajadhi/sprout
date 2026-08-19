@@ -29,9 +29,14 @@ reaching `READY` and a GitHub issue existing for it are the same event.
 7. Assign size (XS-XL) and risk (R0-R4, per `project.yaml` autonomy_policy).
 8. Generate each task's verification plan (`checks:` list) and expected evidence.
 9. Mark a task `READY` only when its prerequisites are satisfied.
-10. For every task that reaches `READY`: create a GitHub issue, apply `sprout:*` labels
-    (type/state/risk/size — see `docs/architecture.md`), and record the issue number on the task.
-    Never rewrite an existing issue's history — update metadata, don't recreate.
+10. For every task that reaches `READY`: ensure the `sprout:*` label set exists (`gh label create
+    --force` is idempotent, safe to run every time), create a GitHub issue via `gh issue create`
+    with type/state/risk/size labels and a body pointing back to the canonical task artifact — not
+    a copy of its content — and record the returned issue number on the task's `github_issue:`
+    field. See `docs/architecture.md` §7 for the exact label set and command shape. On later state
+    changes, update labels via `gh issue edit --add-label/--remove-label`; never close and
+    recreate an issue, and never treat the issue body as something to keep rewriting — it's a
+    pointer, not the content.
 
 ## Decomposition rule
 
