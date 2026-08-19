@@ -20,6 +20,10 @@ reaching `READY` and a GitHub issue existing for it are the same event.
 2. Find accepted (`APPROVED`) requirements without full task coverage.
 3. Read accepted designs and relevant ADRs.
 4. Determine dependencies between prospective tasks.
+   - If decomposition surfaces a consequential technical decision not yet covered by an existing
+     ADR (data model shape, external dependency choice, security boundary, migration approach),
+     draft `artifacts/decision.md` and dispatch the `architecture-reviewer` agent before treating
+     it as settled. Don't force an ADR for a trivial implementation choice.
 5. Identify implementation gaps against what already exists in the codebase.
 6. Decompose work into small tasks — **vertical slices**, not technical layers.
 7. Assign size (XS-XL) and risk (R0-R4, per `project.yaml` autonomy_policy).
