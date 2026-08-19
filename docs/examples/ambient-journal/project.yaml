@@ -1,0 +1,42 @@
+schema_version: 1
+
+name: Ambient Journal
+purpose: >
+  Create a journal from the things that happened during the user's day, using photos, location,
+  calendar, and other authorized signals. Quiet and ambient, not chatbot-like. Privacy first.
+
+platforms: [macOS, iOS]
+technology_stack: unknown
+repository: unknown
+deployment_environments: [preview, production]
+testing_approach: unknown
+accessibility_target: "WCAG 2.2 AA equivalent via platform accessibility APIs (VoiceOver, Dynamic Type)"
+security_privacy_constraints: "location and photo access must be per-signal opt-in; no data leaves device without explicit user action"
+
+autonomy_policy:
+  R0: {description: documentation / trivial changes, approval: autonomous}
+  R1: {description: isolated low-risk behaviour, approval: autonomous_after_verification}
+  R2: {description: meaningful business logic / data behaviour, approval: autonomous_implementation_plus_independent_verification}
+  R3: {description: security / privacy / auth / major architecture / migration, approval: human_required}
+  R4: {description: destructive production or high-consequence operations, approval: human_controlled}
+
+task_sizing_policy:
+  sizes: [XS, S, M, L, XL]
+  decompose_at: L
+  autonomous_ceiling: L
+
+verification_policy:
+  mandatory_checks: [lint, unit]
+  conditional_checks: [integration, contract, build, deploy, runtime, computer_use, visual, review]
+
+evidence_policy:
+  always_redact: [api_keys, bearer_tokens, cookies, passwords, credentials, sensitive_personal_data]
+  minimum_required: task_defines
+
+merge_policy:
+  requires: [task_state_verified, required_evidence_exists, required_ci_checks_pass, required_approvals_exist, branch_protection_passes]
+
+production_approval_policy: human_required
+
+created_at: "2026-08-19"
+sprout_version: 0.1.0
