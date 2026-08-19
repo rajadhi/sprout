@@ -1,0 +1,20 @@
+{
+  "name": "sprout",
+  "description": "AI-native engineering framework for Claude Code: immutable requirements, evidence-gated verification, small-task loops, and GitHub-projected work management",
+  "version": "0.1.0",
+  "author": {
+    "name": "rajadhi"
+  },
+  "homepage": "https://github.com/rajadhi/sprout",
+  "repository": "https://github.com/rajadhi/sprout",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "requirements",
+    "verification",
+    "evidence",
+    "tdd",
+    "loop-engineering",
+    "workflows"
+  ]
+}
