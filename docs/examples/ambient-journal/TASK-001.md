@@ -12,7 +12,7 @@ size: S
 risk: R1
 dependencies: []
 
-github_issue: null
+github_issue: 8   # github.com/rajadhi/sprout/issues/8, real, kept open (not a throwaway test issue)
 verification_run: null
 
 created_at: "2026-09-03"
