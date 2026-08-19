@@ -55,11 +55,29 @@ step-by-step prompting for each sub-action.
 
 ## 5. Hooks
 
-Used sparingly, only for deterministic enforcement that doesn't need LLM judgment: validating
-required artifact structure, detecting accidental edits to immutable artifacts, checking required
-metadata exists, detecting commits that bypass Sprout state. Not a substitute for the main skill
-workflow, and not present at all in M1 — the first hook candidates arrive with M3/M4 once there's
-real state to protect.
+Used sparingly, only for deterministic enforcement that doesn't need LLM judgment. One real hook
+exists: `hooks/check-immutable-artifacts.py`, a `PreToolUse` hook on `Edit|Write` that enforces
+§1.5's immutability invariant mechanically rather than relying on every skill to remember it.
+Concretely:
+
+- `APR-*.md` / `RUN-*.md` / `EVD-*.md` (approval, verification-run, evidence records) are denied
+  any edit the moment they exist on disk — these have no legitimate post-creation edit, ever.
+- `REQ-*.md` / `DES-*.md` / `ADR-*.md` / `DEC-*.md` whose on-disk `status:` is already
+  `APPROVED`/`SUPERSEDED`/`VERIFIED`/`ACCEPTED` may only have `status`, `supersedes`,
+  `superseded_by`, `approved_at`, or `approval_ref` change — a state-machine transition, not a
+  rewrite. Any body edit, or an edit to any other frontmatter field, is denied with a message
+  pointing at creating a new version file instead.
+- Everything else (tasks, intents, not-yet-approved drafts) is unrestricted.
+
+Verified against 6 real cases (`tests/hooks/test_check_immutable_artifacts.py`, run in CI as
+`hook-tests`): 3 real denials (hard-immutable edit, body edit on a superseded requirement,
+unallowed-field edit on an approved design) and 3 real allowances (status-field transition,
+editing an unrestricted task, creating a brand-new versioned file) — not just written to look
+correct, actually invoked as a subprocess against real fixture files with asserted exit codes.
+
+This is a backstop, not a substitute for the main skill workflow — `shape`/`design` should never
+attempt to edit an approved artifact in the first place. The hook exists for the case where they
+(or a human, or a different agent) try to anyway.
 
 ## 6. MCP
 

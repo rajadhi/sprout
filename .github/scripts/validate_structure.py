@@ -40,8 +40,32 @@ def check_frontmatter(path, required_fields=("name", "description")):
             errors.append(f"{path}: frontmatter missing '{field}:' field")
 
 
+def check_hooks_manifest():
+    path = ROOT / "hooks" / "hooks.json"
+    if not path.exists():
+        return
+    try:
+        data = json.loads(path.read_text())
+    except Exception as e:
+        errors.append(f"{path}: invalid JSON ({e})")
+        return
+    if "hooks" not in data:
+        errors.append(f"{path}: missing top-level 'hooks' field")
+        return
+    for event, matchers in data["hooks"].items():
+        for matcher_entry in matchers:
+            for hook in matcher_entry.get("hooks", []):
+                command = hook.get("command", "")
+                script_ref = command.replace("${CLAUDE_PLUGIN_ROOT}", str(ROOT))
+                for token in script_ref.split():
+                    token = token.strip('"')
+                    if token.startswith(str(ROOT)) and not Path(token).exists():
+                        errors.append(f"{path}: {event} hook references missing file {token}")
+
+
 def main():
     check_plugin_manifest()
+    check_hooks_manifest()
 
     for skill_file in sorted((ROOT / "skills").glob("*/SKILL.md")):
         check_frontmatter(skill_file)

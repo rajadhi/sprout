@@ -203,6 +203,9 @@ sprout/
 │   ├── implementation-reviewer.md
 │   └── verifier.md
 ├── artifacts/            (templates with embedded schema; see §7)
+├── hooks/
+│   ├── hooks.json
+│   └── check-immutable-artifacts.py   (see docs/architecture.md §5)
 ├── docs/
 │   ├── protocol.md        (this file)
 │   ├── architecture.md
@@ -210,8 +213,11 @@ sprout/
 │   └── examples/
 ├── tests/
 │   ├── scenarios/
-│   └── fixtures/
-├── .github/workflows/
+│   ├── fixtures/
+│   └── hooks/
+├── .github/
+│   ├── workflows/
+│   └── scripts/
 ├── README.md
 ├── CLAUDE.md
 └── LICENSE
