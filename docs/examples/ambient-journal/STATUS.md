@@ -1,8 +1,11 @@
 # Real `/sprout:status` output — Ambient Journal fixture
 
 Not a hypothetical example report — every number below was pulled from the actual files in this
-directory (`grep -H "^status:" *.md`, real dependency/size/risk fields), as of the state after
-`plan`'s dogfood run (`TASK-001`–`TASK-009`, `ADR-001`) and before `TASK-009` is unblocked.
+directory (`grep -H "^status:" *.md`, real dependency/size/risk fields).
+
+> Updated after `docs/examples/ambient-journal/GRAPH-REQ-001.md` caught and corrected a real
+> mistake: `TASK-009` was planned on an unchecked assumption and is now `RETIRED`, not `BLOCKED`.
+> See that file's "What changed and why" for the full account.
 
 ```
 Requirements
@@ -13,14 +16,15 @@ Requirements
 Design
 1 approved (DES-001-v1)
 0 in review
-(DES-001 is stale relative to REQ-001-v2 per the impact analysis in APR-00003 — /sprout:graph
-flags this, /sprout:status doesn't duplicate that judgment here)
+(DES-001 is current, not stale -- an earlier version of this report incorrectly said otherwise;
+see GRAPH-REQ-001.md for the correction and why it couldn't just be silently fixed in place)
 
 Tasks
 9 total
 0 complete
 8 ready
-1 blocked (TASK-009, waiting on DES-001-v2)
+0 blocked
+1 retired (TASK-009 — its premise didn't hold, see GRAPH-REQ-001.md)
 0 verifying
 
 Verification

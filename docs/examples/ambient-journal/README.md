@@ -33,9 +33,8 @@ those pressure scenarios (`tests/scenarios/`) surfaced.
    - `v1` and `v2` cross-reference via `supersedes` / `superseded_by`.
    - v2 adds `AC-001-04` (enforce the drop, don't just stop using it) rather than silently
      deleting the location-related acceptance criteria from history.
-8. **[APR-00003](APR-00003.md)** — approval for v2, including the impact-analysis note that
-   `DES-001` needs a v2 too (`NEEDS_REVIEW`, not `INVALIDATED` — the flow structure holds, only
-   the location-specific consent prompt needs removal).
+8. **[APR-00003](APR-00003.md)** — approval for v2, including an impact-analysis note that
+   `DES-001` needs a v2 too. **This note turned out to be wrong** — see step 10.
 9. **plan decomposes REQ-001-v2/REQ-002/REQ-003 + DES-001** into 9 vertical-slice tasks
    (**[TASK-001](TASK-001.md)** through **[TASK-009](TASK-009.md)**), by user-visible behavior
    (consent per signal, empty state, draft generation, edit-persists) rather than technical layer.
@@ -44,13 +43,22 @@ those pressure scenarios (`tests/scenarios/`) surfaced.
      **[ADR-001](ADR-001.md)** and dispatched `architecture-reviewer` before treating it as
      settled, approved as **[APR-00004](APR-00004.md)**. `TASK-005` implements the decision.
    - `plan`'s rule 9 ("mark `READY` only when prerequisites are satisfied") holds for real:
-     **[TASK-009](TASK-009.md)** is `BLOCKED`, not `READY` — it needs `DES-001-v2`, which doesn't
-     exist yet, so there's nothing to implement or verify against. `TASK-006` (the backend
-     enforcement half of the same v1→v2 fallout) has no such dependency and *is* `READY`.
-
-That next design version (`DES-001-v2`) and `TASK-009`'s unblock are the natural next step, left
-undone on purpose so this fixture stays a proof of the loop rather than a full Ambient Journal
-build.
+     **[TASK-009](TASK-009.md)** was originally marked `BLOCKED`, not `READY` — believed to need
+     `DES-001-v2`. `TASK-006` (the backend enforcement half of the same v1→v2 fallout) has no such
+     dependency and *is* `READY`.
+10. **Re-running `/sprout:graph`'s impact analysis for real caught a mistake, not just confirmed
+    one.** `APR-00003`'s note that `DES-001` "references location" was written by reasoning from
+    the requirement diff, never actually checked against `DES-001-v1.md`'s real content. Grepping
+    it (`grep -c -i location DES-001-v1.md` → `0`) shows it was written signal-agnostically and
+    never needed updating. **[GRAPH-REQ-001](GRAPH-REQ-001.md)** has the full correction — and the
+    correction itself had to route around `REQ-001-v2`/`APR-00003` being immutable
+    (`hooks/check-immutable-artifacts.py` genuinely blocks editing them, confirmed by trying).
+    Instead: **[TASK-009](TASK-009.md)** is now `RETIRED` — a new task state added specifically
+    because "this task's premise turned out false" had no correct home in the original 12-state
+    machine (`docs/protocol.md` §7) — with the original (wrong) planning rationale kept in the
+    file, not erased, alongside the correction.
+11. **[STATUS.md](STATUS.md)** — a real `/sprout:status` run reflecting the corrected state: 8
+    ready, 0 blocked, 1 retired.
 
 ## What this proves
 
@@ -70,8 +78,17 @@ build.
   though `evidence.md` has always had `SECURITY_RESULT` — found because `TASK-006` genuinely
   needed a security check. Fixed across `artifacts/project.yaml`, `artifacts/task.md`,
   `skills/verify/SKILL.md`, and `docs/protocol.md`.
+- The immutability hook isn't decorative: when the fix for a real mistake required editing an
+  approved requirement and its approval record, the hook actually said no (exit 2, confirmed by
+  trying), and the correction had to go through the only legitimate path — a new artifact, not a
+  quiet rewrite of history.
+- `/sprout:graph`'s impact analysis can be wrong if it reasons from a diff instead of the actual
+  downstream artifact — and re-running it for real, not just trusting the first pass, is what
+  caught that. `skills/graph/SKILL.md` now says this explicitly, added because of this exact case.
 
 ## What this does not prove
 
-This fixture does not yet exercise `develop-next` or `verify` — no branch, no code, no
-verification run exists for any of these tasks. That's the remainder of M3.
+This fixture does not yet exercise `develop-next` or `verify` against its own tasks for real — no
+branch, no code, no verification run exists for any of these Ambient Journal tasks specifically
+(`tests/fixtures/toy-app` is a separate, real proof of the develop-next+verify mechanics, modeled
+on `TASK-003` but not literally executing it).
