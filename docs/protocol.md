@@ -178,6 +178,15 @@ NEEDS_REQUIREMENT_REVIEW`, `ARCHITECTURE_INVALID → NEEDS_ARCHITECTURE_REVIEW`,
 `SECURITY_FAILURE → BLOCKED/HUMAN_REVIEW`, `ENVIRONMENT_FAILURE → RETRY` (bounded — cap
 retries, never blind-loop).
 
+**`RETIRED`** — a 13th state, added after dogfooding surfaced a real gap the original 12 never
+covered: what happens to a planned task that turns out to be unnecessary, not because it failed
+but because upstream reality changed underneath it? From any pre-`VERIFIED` state, a task moves to
+`RETIRED` when `/sprout:graph`'s impact analysis (§7) determines its planned work no longer
+applies — re-reading the actual upstream artifact (not just trusting an earlier assumption about
+it) shows there's nothing left to build. `RETIRED` is terminal, same as `RELEASED`. The task
+artifact stays — deleting it would erase the record of why it was planned and why it turned out
+unnecessary, which is exactly the kind of history §1.5 says not to lose.
+
 ---
 
 ## 8. Repository structure (v1)

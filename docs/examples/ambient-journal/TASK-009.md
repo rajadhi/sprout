@@ -1,7 +1,7 @@
 ---
 id: TASK-009
 title: Remove location option from consent prompt and signal indicator
-status: BLOCKED
+status: RETIRED
 
 implements: [REQ-001]
 design: [DES-001]
@@ -10,42 +10,41 @@ acceptance_criteria: [AC-001-04]
 
 size: XS
 risk: R1
-dependencies: [DES-001-v2]
+dependencies: []
 
 github_issue: null
 verification_run: null
 
 created_at: "2026-09-03"
+retired_at: "2026-09-04"
+retirement_reason: >
+  Planned on an unchecked assumption -- see docs/examples/ambient-journal/GRAPH-REQ-001.md
+  "What changed and why." DES-001-v1 was assumed to reference location because REQ-001-v1
+  (which it was built against) had location in scope. Re-running graph's impact analysis for
+  real (grepping DES-001-v1.md directly instead of reasoning from the requirement diff) found
+  zero location references anywhere in it -- it was written signal-agnostically. There is
+  nothing for this task to implement. Retired, not completed and not deleted -- the record of
+  why it was planned and why it turned out unnecessary stays, per docs/protocol.md §1.5.
 ---
 
-<!-- Deliberately left BLOCKED rather than READY — this is plan's rule 9 ("mark a task READY only
-     when its prerequisites are satisfied") holding under real pressure. DES-001 is still v1: its
-     consent-prompt copy and signal-indicator component were written when location was in scope
-     (REQ-001-v1) and still describe it. TASK-006 already enforces the backend drop without any
-     design dependency — this task is the UI cleanup, and it genuinely cannot be verified against
-     a design spec that doesn't exist yet. -->
+<!-- Originally BLOCKED, not READY -- plan's rule 9 correctly withheld READY pending DES-001-v2.
+     That gate worked as designed. What it couldn't catch is that the premise underneath the
+     block was itself wrong; catching that took an agent actually opening DES-001-v1.md and
+     checking, which is exactly what a corrected graph query did. See GRAPH-REQ-001.md. -->
 
-## Purpose
+## Purpose (as originally planned — kept for the record, not corrected)
 
 `DES-001`'s consent-prompt flow and signal-indicator component both reference location (written
 under REQ-001-v1, before the v1→v2 supersession). This task removes the location-specific UI once
 `DES-001-v2` exists — not before, since there is currently nothing to implement against.
 
+**This premise was false.** `DES-001-v1` never referenced location. See
+`docs/examples/ambient-journal/GRAPH-REQ-001.md`.
+
 ## Verification plan
 
-checks:
-  - visual
-  - review
+Not applicable — retired before implementation.
 
 ## Expected evidence
 
-Not yet determinable — depends on what `DES-001-v2` actually specifies for the reduced
-signal-indicator states.
-
-## Blocked on
-
-`DES-001-v2` does not exist yet. Per the impact analysis recorded in `APR-00003` and
-`docs/examples/ambient-journal/README.md`: `/sprout:graph`-style impact classified `DES-001` as
-`NEEDS_REVIEW`, not `INVALIDATED` — the design's flow structure holds, only this specific UI
-element needs updating. Running `design` again against `REQ-001-v2` produces `DES-001-v2` and
-unblocks this task.
+Not applicable — retired before implementation.

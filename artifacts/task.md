@@ -12,6 +12,11 @@ status: READY
 # ARCHITECTURE_INVALID -> NEEDS_ARCHITECTURE_REVIEW
 # SECURITY_FAILURE -> BLOCKED / HUMAN_REVIEW
 # ENVIRONMENT_FAILURE -> RETRY (bounded, cap 2 — never blind-loop)
+#
+# from any pre-VERIFIED state -> RETIRED (terminal) when /sprout:graph's impact analysis
+# determines this task's planned work no longer applies. Don't delete on retirement — the
+# record of why it was planned and why it turned out unnecessary is worth keeping (§1.5).
+# retirement_reason: (required if status: RETIRED)
 
 implements: [REQ-XXX]
 design: []

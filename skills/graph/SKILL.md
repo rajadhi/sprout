@@ -33,6 +33,12 @@ Use semantic judgment, not blanket invalidation — do not mark everything downs
 `INVALIDATED` just because an upstream requirement changed. Report affected designs, ADRs, tasks,
 tests, implementations, evidence, and releases separately.
 
+Classification must be grounded in the actual current content of the downstream artifact, not an
+assumption about what it probably contains. A task whose planned work turns out unnecessary once
+you actually re-read the artifact it depends on — not merely stale, genuinely moot — moves to
+`RETIRED` (`docs/protocol.md` §7), not left `BLOCKED` or `INVALIDATED` forever. Don't guess this
+from the requirement diff alone; open the downstream artifact and check.
+
 ## Must not
 
 - Require a graph database or index for v1
