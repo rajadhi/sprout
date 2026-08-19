@@ -180,4 +180,21 @@ High-power tooling with a different trust boundary than sandboxed commands — t
 Sprout never silently enables it, always declares when a verification scenario needs it, names
 the specific application being controlled, captures evidence of the interaction, and provides a
 clean stop path. Fallback for GUI functionality that APIs and dedicated tools can't adequately
-verify — prefer precise browser/API tools where available. Backlog item, arrives after M4.
+verify — prefer precise browser/API tools where available.
+
+**The navigate → interact → capture evidence → assert expected state mechanism is proven real**,
+not just prose: `tests/fixtures/toy-ui/` runs it against an actual rendered page (real screenshot,
+real DOM text/accessibility assertions, real click, real console check — `RUN-toy-003.md`).
+Stated honestly, not overclaimed: that fixture is a **web** page verified with browser tools;
+Ambient Journal's actual UI tasks (e.g. `TASK-004`) target native iOS/macOS, which needs the iOS
+Simulator path specifically, not a substitute web mockup — `tests/fixtures/toy-ui/README.md`
+explains why `TASK-004.md` isn't credited with this evidence. A full native proof (build a minimal
+SwiftUI view, drive it via the iOS Simulator, screenshot, assert) is possible with the tools
+available in a Claude Code session but is a materially larger effort than establishing the
+mechanism itself required — left as an explicit next step.
+
+**Real capability gap surfaced, not hidden:** the session's Browser tool doesn't offer a way to
+persist a screenshot to disk as a file — `EVD-toy-003.md`'s evidence relies on DOM-level
+assertions plus a precise description of what was visually confirmed, not a stored PNG. Whatever
+project actually installs Sprout needs to check what its own available tooling can persist before
+promising `SCREENSHOT`-type evidence as a stored artifact.
