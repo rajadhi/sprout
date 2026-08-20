@@ -1,0 +1,13 @@
+{
+  "name": "sprout",
+  "owner": {
+    "name": "rajadhi"
+  },
+  "plugins": [
+    {
+      "name": "sprout",
+      "source": "./",
+      "description": "AI-native engineering framework for Claude Code: immutable requirements, evidence-gated verification, small-task loops, and GitHub-projected work management"
+    }
+  ]
+}
