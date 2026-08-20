@@ -29,23 +29,29 @@ tasks, and then working, verified code — with a human approving the steps that
 Add Sprout as a Claude Code plugin to your project. Once installed, `/sprout:*` commands are
 available.
 
-**CLI, for local development:**
+**Desktop app (macOS):** `/plugin` slash commands aren't available in every Desktop context, so
+use the Settings GUI instead — **Settings → Plugins → Add → Add marketplace**, then paste this
+repo's URL:
+
+```
+https://github.com/rajadhi/sprout
+```
+
+Install `sprout` from the marketplace it registers (this repo ships its own
+`.claude-plugin/marketplace.json`, so it lists itself). Verified working end-to-end this way.
+
+**CLI, a real interactive `claude` terminal session, for a persistent install:**
+
+```
+/plugin marketplace add rajadhi/sprout
+/plugin install sprout@sprout
+```
+
+**CLI, for local development without installing:**
 
 ```
 claude --plugin-dir /path/to/sprout
 ```
-
-**CLI or Desktop app, for a persistent install:** this repo ships its own
-`.claude-plugin/marketplace.json`, so it can be added as a single-plugin marketplace.
-
-```
-/plugin marketplace add /path/to/sprout
-/plugin install sprout@sprout
-```
-
-In the Desktop app's Code tab, run those same two commands in the prompt box (they work there
-too — no separate terminal needed), or use the **+** button → **Plugins** → **Add plugin** to
-browse and install from your configured marketplaces once the marketplace above is added.
 
 ## Quick start
 
