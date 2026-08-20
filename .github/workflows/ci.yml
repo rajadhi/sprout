@@ -74,3 +74,15 @@ jobs:
           fi
       - name: Check every changed skill touched a pressure scenario
         run: python3 .github/scripts/check_skill_scenario_coverage.py
+
+  evidence-redaction-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run evidence redaction regression tests
+        run: python3 -m unittest tests.ci.test_check_evidence_redaction -v
+      - name: Check every evidence record is redacted with no obvious secrets
+        run: python3 .github/scripts/check_evidence_redaction.py
