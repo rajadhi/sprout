@@ -20,22 +20,57 @@ them; Sprout stays responsible for task selection, staleness, evidence, and stat
 LOAD PROJECT STATE
 → FIND READY TASKS                  (status: READY only — BLOCKED/etc. never enter this pool)
 → SELECT ONE TASK              (see selection algorithm below)
-→ READ FULL CONTEXT            (requirement, design, ADRs, acceptance criteria)
-→ CHECK STALENESS               (see below)
-→ CREATE ISOLATED WORKTREE/BRANCH   (Superpowers: using-git-worktrees)
+→ CHECK PROGRESS LOG           (resume vs fresh start — see Progress log and resuming below)
+→ READ CONTEXT                  (digest of requirement, design, ADRs, acceptance criteria — see
+                                Reading context below; skip if resuming past this phase)
+→ CHECK STALENESS               (see below — always runs, even on resume)
+→ CREATE ISOLATED WORKTREE/BRANCH   (Superpowers: using-git-worktrees)             [log phase]
 → CREATE IMPLEMENTATION PLAN        (Superpowers: writing-plans)
 → CAPTURE BASELINE                  (record which tests are already red before touching anything)
+                                     [log phase]
 → TDD                                (Superpowers: test-driven-development — RED, GREEN, REFACTOR)
+                                     [log phase per RED/GREEN commit]
 → IMPLEMENT                          (Superpowers: subagent-driven-development where task warrants it)
 → LOCAL VERIFY                       (see below — distinguish pre-existing failures from regressions)
+                                     [log phase]
 → REQUEST REVIEW                     (Superpowers: requesting-code-review, or implementation-reviewer agent)
-→ HAND OFF TO PR                     (Superpowers: finishing-a-development-branch)
+→ HAND OFF TO PR                     (Superpowers: finishing-a-development-branch)  [log phase]
 ```
 
 **If `FIND READY TASKS` returns an empty set:** report it plainly — no task selected, list what's
 blocking every `BLOCKED` task and what would unblock it. Do not select a `BLOCKED`, `VERIFIED`, or
 `MERGED` task because nothing else is available, and do not fabricate a task that isn't in the
 artifact tree.
+
+## Reading context
+
+`READ CONTEXT` does not mean pulling the requirement, design, ADRs, and acceptance criteria
+directly into the driving loop's own context. Dispatch a read-only Agent to gather them and return
+a condensed digest — the acceptance criteria, and only the design constraints/ADRs actually
+relevant to this task — rather than holding the full source documents in the loop that also has to
+carry TDD/implementation/verify state for however long this task takes. Re-dispatch for a fuller
+re-read if the digest turns out to be missing something the later steps need; don't silently guess
+past a gap in it.
+
+## Progress log and resuming
+
+Every phase boundary marked `[log phase]` above gets one line appended to the task's own
+`## Progress Log` section (`artifacts/task.md` template) — timestamp, phase, one-line detail. This
+is the loop's external memory: if the agent's context is lost or compacted mid-task, the next
+invocation must not restart blind or silently redo completed work.
+
+**`CHECK PROGRESS LOG` runs right after task selection, before anything else:**
+
+- **No log, or log shows no phases started:** fresh start, run the full workflow.
+- **Log shows phases completed:** this is a resume. Do not redo those phases — but do not trust
+  the log blindly either. Re-verify the claimed state before continuing (the branch exists and
+  matches the logged commit, claimed-passing tests still pass). If reality doesn't match the log's
+  claim, treat it as `IMPLEMENTATION_ERROR` and fall into the diagnose/retry path (see Failure
+  handling below) rather than silently overwriting the discrepancy or trusting the stale claim.
+- **`CHECK STALENESS` always re-runs on resume**, regardless of which phase the log says was last
+  completed. A resumed task is exactly the case where time has passed and an upstream
+  requirement/design could have been superseded since the log was last written — skipping the
+  recheck because "we already got past that phase" defeats the point of the check.
 
 ## Task selection algorithm
 
@@ -105,3 +140,5 @@ Then route per the task state machine's failure paths (`docs/protocol.md` §7):
 - Implement without an isolated branch/worktree
 - Claim TDD compliance for tests written after the fact
 - Produce its own final verification verdict — that's `verify`'s job, not this skill's
+- Resume a task by trusting its progress log without re-verifying the claimed state against reality
+- Skip `CHECK STALENESS` on a resumed task because a prior phase already passed it

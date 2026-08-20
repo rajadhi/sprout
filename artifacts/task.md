@@ -53,3 +53,12 @@ checks:
 ## Expected evidence
 
 <!-- what will prove the acceptance criteria — see artifacts/evidence.md -->
+
+## Progress Log
+
+<!-- develop-next appends one line per phase boundary (worktree created, baseline
+     captured, each RED/GREEN commit, local verify complete, PR opened) — timestamp,
+     phase, one-line detail. This is the loop's external memory: if context is lost
+     or compacted mid-task, the next invocation resumes from here instead of
+     restarting blind or redoing completed work. See skills/develop-next/SKILL.md
+     "Progress log and resuming". -->
