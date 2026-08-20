@@ -1,7 +1,8 @@
 # Sprout
 
-A Claude Code plugin: an AI-native engineering framework for moving from unstructured human intent
-to verified, evidenced, merged change.
+A Claude Code plugin: an AI-native engineering framework that turns unstructured human intent into
+verified, evidenced, merged change — raw thought in, shipped and proven code out, with a human
+approving every consequential step along the way.
 
 ## What Sprout is
 
@@ -27,13 +28,50 @@ to verified, evidenced, merged change.
 Add Sprout as a Claude Code plugin to your project. Once installed, `/sprout:*` commands are
 available.
 
-## Bootstrap
+## Quick start
 
 ```
 /sprout:init
 ```
 
-See [docs/getting-started.md](docs/getting-started.md) for the full walkthrough.
+Bootstraps `.sprout/` and asks only for genuinely unresolved project context — unknowns are fine.
+From there the loop runs on repeat, one command at a time, each gated by human approval where it
+matters:
+
+```
+/sprout:shape          raw intent → approved, immutable requirement
+/sprout:design         (if it needs a UX/UI treatment) → approved, immutable design
+/sprout:plan           requirement/design → small vertical-slice tasks, GitHub issues auto-created
+/sprout:develop-next   pick the best ready task, work it through TDD/implementation to a PR
+/sprout:verify         run the task's verification plan, capture evidence, record a verdict
+```
+
+New raw thoughts arrive continuously — the loop above runs again for each one, without ever
+rewriting prior accepted history. Full walkthrough with expected output at each step:
+[docs/getting-started.md](docs/getting-started.md).
+
+## Command reference
+
+```
+/sprout:init          bootstrap a project
+/sprout:shape         raw intent → proposed, then approved, immutable requirement versions
+/sprout:design        accepted requirement(s) → critiqued, approved, immutable design version
+/sprout:plan          accepted requirements/designs → small vertical-slice tasks; auto-creates
+                       GitHub issues for tasks that reach READY
+/sprout:develop-next  select one ready task, execute it (worktree → TDD → implementation →
+                       local verify → PR), including its own diagnose/retry failure path
+/sprout:verify        run a task's verification plan, capture evidence, record a Verification Run
+/sprout:graph         inspect artifact-graph relationships for a node; includes impact analysis
+/sprout:status         concise project state + next recommended task, plus loop-health metrics
+/sprout:migrate        move a project's artifacts to a new Sprout schema_version without silently
+                       reinterpreting pre-migration versions
+/sprout:release        VERIFIED/MERGED work → RELEASE_CANDIDATE → STAGING → PRODUCTION_APPROVAL
+                       → RELEASED, enforcing project.yaml's production_approval_policy
+/sprout:doctor         audit artifact-tree integrity: dangling references, stale versions,
+                       orphaned approvals, schema drift
+/sprout:metrics        deeper loop-health breakdown than status's snapshot — trends, breakdowns
+                       by risk class/requirement
+```
 
 ## Lifecycle
 
@@ -58,51 +96,18 @@ advance it because the required evidence and policy conditions are satisfied.**
 
 ## Documentation
 
+- [docs/getting-started.md](docs/getting-started.md) — command-by-command walkthrough
 - [docs/protocol.md](docs/protocol.md) — full v1 specification: invariants, artifact model,
   command surface, milestones
 - [docs/architecture.md](docs/architecture.md) — how the plugin fits Claude Code's extension model
-- [docs/getting-started.md](docs/getting-started.md) — command-by-command walkthrough
 
 ## Status
 
-**v1 complete, then pushed past v1 into every remaining backlog item.** 12 skills, 6 agents, 9
-artifact templates, 20 pressure scenarios, 1 real enforcement hook, 4 required CI checks, 19
-GitHub labels, 14 merged PRs — every one gated by real CI on a real branch-protected repo, not a
-description of what would happen.
-
-- **M1–M4 (protocol, shape/design, plan/develop-next/verify, GitHub projection) — done.** See
-  git history for the full account; the short version: every milestone shipped with pressure
-  scenarios where applicable and a real dogfooded proof, not just prose. Real gaps found and
-  fixed at every stage, including a genuine spec inconsistency (`checks:` never had a `security`
-  type) and a real mistake in the framework's own reasoning (`TASK-009` retired after re-running
-  `graph`'s impact analysis found its premise was false — see
-  [GRAPH-REQ-001.md](docs/examples/ambient-journal/GRAPH-REQ-001.md)).
-- **Immutability hook — real, not decorative.** `hooks/check-immutable-artifacts.py` genuinely
-  blocks editing approved requirements/designs/decisions and any approval/verification/evidence
-  record — confirmed by trying, including during the `TASK-009` correction, which had to route
-  around it rather than through it.
-- **Real GitHub enforcement.** Branch protection requires 4 CI checks (`validate-structure`,
-  `toy-app-tests`, `hook-tests`, `risk-approval-check`) before merge — the last one closes a real
-  gap: R3/R4 "human approval required" now has GitHub-enforced teeth
-  (`.github/scripts/check_risk_approval.py`), not just trust. All 19 `sprout:*` labels exist for
-  real on this repo.
-- **Real Superpowers-integrated execution.** `TASK-006` traveled `READY → VERIFIED → MERGED` for
-  real: a real `git worktree`, a dispatched subagent doing real TDD (honestly reporting when its
-  first test scenario didn't actually produce RED and adding a real adversarial one instead), an
-  independent verifier re-running the suite rather than trusting the report, a real merged PR.
-- **Backlog cleared.** `/sprout:migrate`, `/sprout:release`, `/sprout:doctor`, `/sprout:metrics`
-  all built (`doctor` dogfooded for real —
-  [DOCTOR.md](docs/examples/ambient-journal/DOCTOR.md)). Loop-health metrics computed from real
-  verification runs, honestly caveated for sample size and timestamp precision
-  ([METRICS.md](docs/examples/ambient-journal/METRICS.md)). Computer-use/runtime verification's
-  mechanism proven for real via a browser tool
-  ([tests/fixtures/toy-ui](tests/fixtures/toy-ui)) — explicitly not overclaimed as native
-  iOS/macOS verification, which Ambient Journal's actual UI tasks would need.
-
-See [docs/protocol.md §9](docs/protocol.md) for the milestone definitions. Genuinely remaining:
-`/sprout:migrate`/`/sprout:release` are specified but unexercised (no schema change or release
-has happened yet to run them against), and native iOS/macOS computer-use verification is proven
-possible but not yet executed end-to-end.
+v1 complete, backlog cleared — see [docs/protocol.md §9](docs/protocol.md) for milestone
+definitions and `git log` for the full account. Genuinely remaining: `/sprout:migrate` and
+`/sprout:release` are specified but unexercised (no schema change or release has happened yet to
+run them against), and native iOS/macOS computer-use verification is proven possible but not yet
+executed end-to-end.
 
 ## License
 
