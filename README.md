@@ -1,27 +1,28 @@
 # Sprout
 
-A Claude Code plugin: an AI-native engineering framework that turns unstructured human intent into
-verified, evidenced, merged change — raw thought in, shipped and proven code out, with a human
-approving every consequential step along the way.
+Sprout is a Claude Code plugin that takes a rough idea and walks it through to shipped, working
+code — write down what you want, get a requirement, a design if it needs one, a set of small
+tasks, and then working, verified code — with a human approving the steps that actually matter.
 
 ## What Sprout is
 
-- A protocol for immutable, versioned requirements, designs, and decisions
-- A small-task execution loop (`/sprout:develop-next`) built on Claude Code's native skills,
-  agents, and Superpowers — not a new agent runtime
-- An evidence-gated verification model: a task cannot reach `VERIFIED` because an agent believes
-  it worked
-- A GitHub projection: issues, labels, and branch protection reflect Sprout's canonical state,
-  they don't replace it
+- It keeps requirements, designs, and decisions as versioned files that don't get silently
+  rewritten — change your mind later and it writes a new version, the old one stays in history
+- It runs the actual coding loop (`/sprout:develop-next`): pick a task, build it, verify it, open
+  a PR — using Claude Code's own skills and agents, plus Superpowers for the TDD/implementation
+  work, not some separate agent runtime bolted on
+- It won't call a task done just because an agent says it worked — it needs evidence first
+- It mirrors its state into GitHub (issues, labels, branch protection), but GitHub isn't where the
+  real state lives — Sprout's own files are
 
 ## What Sprout is not
 
-- Not an application — it's the engineering framework you install into one
-- Not an alternative agent runtime or a graph database product
-- Not an execution-topology router (2026-sense "graph engineering") — see
-  [docs/protocol.md §3](docs/protocol.md) for why that's deliberate
-- Not a fork of [Superpowers](https://github.com/obra/superpowers) — Sprout depends on it for
-  TDD/implementation mechanics and stays responsible for immutable artifacts, evidence, and policy
+- Not an app — it's the framework you install into one
+- Not its own agent runtime, and not a graph database
+- Not a router deciding which agent runs next (that's "graph engineering," in the 2026 sense of
+  the term) — see [docs/protocol.md §3](docs/protocol.md) for why that's on purpose
+- Not a fork of [Superpowers](https://github.com/obra/superpowers) — Sprout leans on it for
+  TDD/implementation and stays responsible for the artifacts, evidence, and policy around it
 
 ## Install
 
@@ -46,8 +47,8 @@ matters:
 /sprout:verify         run the task's verification plan, capture evidence, record a verdict
 ```
 
-New raw thoughts arrive continuously — the loop above runs again for each one, without ever
-rewriting prior accepted history. Full walkthrough with expected output at each step:
+New ideas keep coming — run the loop again for each one; it never rewrites what's already been
+accepted. Full walkthrough with expected output at each step:
 [docs/getting-started.md](docs/getting-started.md).
 
 ## Command reference
