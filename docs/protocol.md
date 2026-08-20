@@ -187,7 +187,7 @@ EVIDENCE_CAPTURE → INDEPENDENT_REVIEW → VERIFIED → MERGED → RELEASED`, w
 `VERIFICATION_FAILED → DIAGNOSING → IMPLEMENTING`, `SPECIFICATION_INVALID →
 NEEDS_REQUIREMENT_REVIEW`, `ARCHITECTURE_INVALID → NEEDS_ARCHITECTURE_REVIEW`,
 `SECURITY_FAILURE → BLOCKED/HUMAN_REVIEW`, `ENVIRONMENT_FAILURE → RETRY` (bounded — cap
-retries, never blind-loop).
+2 attempts, never blind-loop; see `skills/develop-next/SKILL.md`).
 
 **`RETIRED`** — a 13th state, added after dogfooding surfaced a real gap the original 12 never
 covered: what happens to a planned task that turns out to be unnecessary, not because it failed
