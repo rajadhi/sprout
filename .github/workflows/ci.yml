@@ -51,3 +51,26 @@ jobs:
         run: python3 -m unittest tests.ci.test_check_risk_approval -v
       - name: Check every R3/R4 task has a real approved approval record
         run: python3 .github/scripts/check_risk_approval.py
+
+  skill-scenario-coverage-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run skill/scenario coverage regression tests
+        run: python3 -m unittest tests.ci.test_check_skill_scenario_coverage -v
+      - name: Determine changed-file range for this event
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+          else
+            echo "BASE_SHA=${{ github.event.before }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
+          fi
+      - name: Check every changed skill touched a pressure scenario
+        run: python3 .github/scripts/check_skill_scenario_coverage.py
