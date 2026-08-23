@@ -79,6 +79,10 @@ accepted. Full walkthrough with expected output at each step:
                        GitHub issues for tasks that reach READY
 /sprout:develop-next  select one ready task, execute it (worktree → TDD → implementation →
                        local verify → PR), including its own diagnose/retry failure path
+/sprout:develop-all-unattended
+                       run develop-next in a loop across the whole READY backlog (meant to be
+                       driven by Claude Code's /goal) — never merges, never touches an R3/R4 task
+                       without approval, leaves a run note plus a shape-based path to redirect
 /sprout:verify        run a task's verification plan, capture evidence, record a Verification Run
 /sprout:graph         inspect artifact-graph relationships for a node; includes impact analysis
 /sprout:status         concise project state + next recommended task, plus loop-health metrics
