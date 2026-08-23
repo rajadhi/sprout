@@ -92,6 +92,28 @@ nodes/edges as versioned file metadata: requirement↔design↔task↔evidence) 
 and impact analysis, queried by `/sprout:graph`. This is not graph engineering in the 2026 sense —
 it's closer to a lightweight knowledge graph. Calling it that from here on avoids the confusion.
 
+### 3.1 `/goal` drives the loop's turns; it doesn't replace the loop's gate
+
+Claude Code's `/goal` command (added after this document's original tightening pass) is a
+session-level primitive: you give it a completion condition, and it keeps starting the next turn
+until a lightweight evaluator model — reading only the conversation transcript, no tool calls of
+its own — judges the condition met. It's exactly the mechanical half of loop engineering (§3): the
+"iterates toward a goal until a stop condition is met" part, generalized outside Sprout's own task
+state machine.
+
+Sprout can point `/goal` at itself — e.g. `/goal run /sprout:develop-next on TASK-042 until it
+reaches PR_OPEN with a PASS verification-run verdict` — and get unattended turn-to-turn
+continuation without a human re-prompting each step. See `docs/getting-started.md`'s "Run it
+unattended with `/goal`" for concrete conditions.
+
+What it must never become is a second, weaker completion check running alongside Sprout's real
+one. `/goal`'s evaluator judges from conversation text, not evidence — it cannot itself confirm a
+test passed or a file exists, only that Claude said so. Every `/goal` condition written against
+Sprout state must therefore name a state that's *itself* evidence-gated (a task at `PR_OPEN` only
+after `verifier` recorded `PASS`; a requirement at `READY_FOR_REVIEW` only after
+`specification-critic` ran) — never a condition satisfied merely by Claude's own narration. `/goal`
+removes the need to re-prompt between turns; it does not, and must not, lower §1's evidence bar.
+
 ---
 
 ## 4. Terminology (mostly unchanged)
