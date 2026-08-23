@@ -1,7 +1,7 @@
 ---
 id: TASK-006
 title: Enforce dropped location signal is never read by generation
-status: MERGED
+status: RELEASED
 
 implements: [REQ-001]
 design: []
@@ -14,6 +14,7 @@ dependencies: []
 
 github_issue: null
 verification_run: RUN-toy-002
+approval_ref: APR-00005
 
 created_at: "2026-09-03"
 ---
@@ -41,3 +42,11 @@ checks:
 Unit test seeding stale location data from a simulated prior version; assert generation output
 contains zero references to it. Security-classed check: no location permission request exists
 anywhere in the consent flow (TASK-001/002 scope explicitly excludes it).
+
+## Release
+
+Released 2026-08-23 via `/sprout:release`, real dogfood run of the skill end-to-end
+(`docs/protocol.md` §9 backlog item). Candidate: commit `5b85c81` on `origin/main` (PR #6) —
+independently confirmed against actual git history, not trusted from this file's own `status:`
+field. No staging deploy: `tests/fixtures/toy-app` has no real deployment mechanism, and none was
+fabricated. `production_approval_policy: human_required` gate cleared under `APR-00005`.
