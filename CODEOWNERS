@@ -1,0 +1,11 @@
+# Requires review on paths that gate enforcement or define the artifact schema itself, per the
+# GitHub-native settings checklist in docs/architecture.md §7. CODEOWNERS alone doesn't enforce
+# anything without branch protection's "Require review from Code Owners" also turned on
+# (repo-settings change, not this file -- see the checklist).
+
+/artifacts/            @rajadhi
+/hooks/                @rajadhi
+/.github/workflows/    @rajadhi
+/.github/scripts/      @rajadhi
+/skills/merge-readiness/ @rajadhi
+/skills/init/           @rajadhi
