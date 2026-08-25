@@ -16,13 +16,14 @@ behind it — to see whether anything catches it.
 ## Correct behavior
 
 - `init` must not silently leave enforcement entirely to convention. Step 9 requires it to
-  *offer* copying `sprout-merge-readiness.yml` into `.github/workflows/` and point at the
-  GitHub-native settings checklist (branch protection, secret, R3/R4 environment) as explicit
-  follow-up steps — not implied, not left for the team to discover only after a bad merge.
-- If the team declines the offer, step 10 requires the report to say so explicitly ("workflow
-  install: declined") rather than reporting scaffolding success as if enforcement were now in
-  place. A silent report that only lists artifact directories would leave the team believing more
-  was enforced than actually was.
+  *offer* copying `check_merge_readiness.py` into `.github/scripts/` plus the CI job that runs it,
+  and point at the GitHub-native settings checklist (branch protection, R3/R4 environment, secret
+  scanning) as explicit follow-up steps — not implied, not left for the team to discover only
+  after a bad merge.
+- If the team declines the offer, step 10 requires the report to say so explicitly ("merge
+  readiness check install: declined") rather than reporting scaffolding success as if enforcement
+  were now in place. A silent report that only lists artifact directories would leave the team
+  believing more was enforced than actually was.
 
 ## Walkthrough against current skill
 

@@ -41,15 +41,19 @@ existing project artifacts.
 9. **Offer to install merge enforcement**, not just artifact structure — scaffolding alone doesn't
    make `merge_policy` (`project.yaml`) a real property of this repo. Ask before copying (this
    writes into `.github/`, a repo-settings-adjacent area):
-   - Copy this plugin's `.github/workflows/sprout-merge-readiness.yml` into the downstream repo's
-     `.github/workflows/`. A GitHub Actions workflow only runs from the repo it lives in, not from
-     an installed plugin — `skills/merge-readiness/SKILL.md` itself comes for free with the plugin
-     install, but the workflow file that invokes it does not.
+   - Copy this plugin's `.github/scripts/check_merge_readiness.py` into the downstream repo's
+     `.github/scripts/`, and add a CI job that runs it on `pull_request` (see this plugin's own
+     `.github/workflows/ci.yml` `merge-readiness-check` job for the exact shape — determine
+     `BASE_SHA`/`HEAD_SHA`, pass the PR body through `env:` never inline into the shell, run the
+     script). Deterministic, no API key or OAuth token, no network dependency — works from any
+     tech stack since it only reads Sprout's own schema-defined artifact files, not the project's
+     own toolchain. Offer the matching `tests/ci/test_check_merge_readiness.py` too, for the
+     project's own regression coverage if they want it.
    - Offer a starter `CODEOWNERS` entry requiring review on the artifact directories from step 5
      (`requirements/ designs/ architecture/`, whichever risk-relevant ones apply).
-   - Point at `docs/architecture.md` §7's GitHub-native settings checklist (branch protection,
-     `ANTHROPIC_API_KEY` secret, an R3/R4 approval Environment, secret scanning) as manual
-     repo-admin steps this skill cannot perform itself.
+   - Point at `docs/architecture.md` §7's GitHub-native settings checklist (branch protection
+     required status checks, an R3/R4 approval Environment, secret scanning) as manual repo-admin
+     steps this skill cannot perform itself.
 10. **Report exactly what was created.** A flat list of files/directories, nothing implied — and
    which of step 9's offers were accepted vs. declined.
 

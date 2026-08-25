@@ -80,8 +80,8 @@ attempt to edit an approved artifact in the first place. The hook exists for the
 (or a human, or a different agent) try to anyway. It is also **not the enforcement boundary**: it
 only sees Claude Code's own `Edit`/`Write` tool calls, so it's a local guardrail for the common
 case, not a guarantee. The actual CI-facing check that catches an illegal transition regardless of
-which tool produced it is `skills/merge-readiness/SKILL.md` (§7) — it reads the PR diff itself
-rather than intercepting a live tool call.
+which tool produced it is `.github/scripts/check_merge_readiness.py` (§7) — it reads the PR diff
+itself, base commit vs. head, rather than intercepting a live tool call.
 
 ## 6. MCP
 
@@ -170,23 +170,29 @@ use GitHub's own native identity instead:
 gap: nothing checked a PR's claimed task against a real `VERIFIED` status, a matching `PASS`
 verification run bound to *this exact commit*, mandatory-check coverage, and valid evidence — a
 code-only PR could pass CI without participating in Sprout's own policy at all. This is relational
-logic across several artifact files (task → run → evidence → commit SHA), not something an
-off-the-shelf GitHub Action or a branch-protection setting can express. Rather than add another
-bespoke Python parser for it, `skills/merge-readiness/SKILL.md` does this judgment as a headless
-Claude Code invocation (`.github/workflows/sprout-merge-readiness.yml`, using
-`anthropics/claude-code-action`) that runs read-only against the PR diff and returns a structured
-`merge_ready`/`reasons` verdict the workflow gates on.
+logic across several artifact files (task → run → evidence → commit SHA) plus a fixed forward-only
+transition table, both fully expressible deterministically —
+`.github/scripts/check_merge_readiness.py` does it the same way `check_risk_approval.py` and
+`check_evidence_redaction.py` already do: whole-repo/diff-aware parsing, no LLM judgment, no
+external dependency. (An earlier version of this check ran as a headless Claude Code invocation —
+see git history for `skills/merge-readiness/SKILL.md` — replaced once it became clear the
+relational logic here doesn't need judgment, only needed a network-dependent API key/OAuth token
+to run, and traded a hard guarantee for a probabilistic one on exactly the invariant this repo
+cares most about proving mechanically.)
 
-This is a deliberate, named tradeoff: an LLM-judgment gate instead of a deterministic one. It
-avoids maintaining a second brittle parser for Sprout's relational schema, at the cost of being
-non-deterministic — treat a pass from it as informative, not infallible, same caveat the skill
-file states about itself. It also closes a real bypass in `hooks/check-immutable-artifacts.py`:
-that hook only watches Claude's own `Edit`/`Write` tool calls and treats `status` as always
-editable, so `APPROVED → PROPOSED` followed by a body rewrite via any other tool (Bash, a script,
-Codex's `apply_patch`) went through unblocked locally. `merge-readiness` reads the diff itself
-against the PR's base commit, so it catches the same sequence regardless of which tool produced
-it — the hook is correctly scoped down to "local guardrail," this skill is the actual CI-facing
-enforcement boundary.
+It also closes a real bypass in `hooks/check-immutable-artifacts.py`: that hook only watches
+Claude's own `Edit`/`Write` tool calls and treats `status` as always editable, so
+`APPROVED → PROPOSED` followed by a body rewrite via any other tool (Bash, a script, Codex's
+`apply_patch`) went through unblocked locally. `check_merge_readiness.py` diffs the PR's base
+commit against its head directly, so it catches the same sequence regardless of which tool
+produced it — the hook is correctly scoped down to "local guardrail," this script is the actual
+CI-facing enforcement boundary. Regression-tested the same way as the other CI scripts:
+`tests/ci/test_check_merge_readiness.py`, run in CI as `merge-readiness-check`.
+
+Portable to any downstream repo regardless of tech stack, unlike the fuller lint/build/test
+pipeline in §8 below — it only ever reads Sprout's own schema-defined artifact files, so `init`
+can hand it to a project as-is (`skills/init/SKILL.md` step 9) without assuming a language or
+build toolchain.
 
 ### GitHub-native settings checklist (not yet applied — repo-settings changes, not code)
 
@@ -194,15 +200,15 @@ These require repo admin access via the GitHub UI or API and were deliberately l
 code changes above, per this repo's own "check with the user before high-blast-radius changes"
 discipline:
 
-- [ ] Add `merge-readiness` to branch protection's required status checks once
-  `ANTHROPIC_API_KEY` is configured as a repo secret and the workflow has run green at least once.
+- [ ] Add `merge-readiness-check` to branch protection's required status checks.
 - [ ] Create a `r3-r4-approval` GitHub Environment with required reviewers, and add a job that
   targets it for any PR touching an R3/R4-risk task.
 - [ ] Enable secret scanning + push protection (Settings → Code security) — strictly broader
   coverage than `.github/scripts/check_evidence_redaction.py`'s four regex patterns, maintained by
   GitHub rather than by this repo.
-- [ ] Add a `CODEOWNERS` file requiring review on `artifacts/`-risk paths and the immutable
-  artifact directories, so the "who can touch this" question doesn't rely on convention alone.
+- [x] `CODEOWNERS` requiring review on `artifacts/`-risk paths and the immutable artifact
+  directories — added, but needs "Require review from Code Owners" enabled in branch protection
+  to actually take effect (still a repo-settings step).
 
 ## 8. CI/CD
 
