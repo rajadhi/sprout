@@ -77,7 +77,11 @@ correct, actually invoked as a subprocess against real fixture files with assert
 
 This is a backstop, not a substitute for the main skill workflow — `shape`/`design` should never
 attempt to edit an approved artifact in the first place. The hook exists for the case where they
-(or a human, or a different agent) try to anyway.
+(or a human, or a different agent) try to anyway. It is also **not the enforcement boundary**: it
+only sees Claude Code's own `Edit`/`Write` tool calls, so it's a local guardrail for the common
+case, not a guarantee. The actual CI-facing check that catches an illegal transition regardless of
+which tool produced it is `skills/merge-readiness/SKILL.md` (§7) — it reads the PR diff itself
+rather than intercepting a live tool call.
 
 ## 6. MCP
 
@@ -145,14 +149,60 @@ or the GitHub UI: required PR before merge, required status checks (the CI workf
 required conversation resolution, no force-push, no branch deletion by non-admins. See
 `.github/workflows/` for the checks branch protection should require.
 
-**R3/R4 approval, given real teeth.** `required_pull_request_reviews.required_approving_review_count`
-can't meaningfully enforce docs/protocol.md §40's "R3/R4 needs human approval" on a solo-maintainer
-repo — there's no second reviewer, and `enforce_admins: false` lets the owner bypass branch
-protection outright (github-dogfood.md documents this real gap). Instead of leaving R3/R4 approval
-trust-based, `.github/scripts/check_risk_approval.py` makes it a required status check: every task
-file with `risk: R3` or `risk: R4` must carry an `approval_ref` pointing at a real `APR-*.md` that
-says `decision: approved` and names that task — checked deterministically, whole-repo, same style
-as `validate_structure.py`. A task claiming R3/R4 without one fails CI regardless of who's pushing.
+**R3/R4 approval, given real teeth — two layers, not one.** An external review of v0.2.0 correctly
+flagged that `.github/scripts/check_risk_approval.py` alone only proves an `APR-*.md` file exists
+saying `decision: approved`, not that an authorized human actually approved it — no actor
+identity, no timestamp, nothing stopping the PR's own author from writing the approval record
+themselves. The fix is to stop trying to prove human identity with a markdown parser at all and
+use GitHub's own native identity instead:
+
+- **GitHub Environments** (repo Settings → Environments), one per risk class that needs a human
+  gate (e.g. `r3-r4-approval`) with required reviewers configured. A workflow job that touches an
+  R3/R4-risk task targets that environment; GitHub blocks the job in its own UI until a named,
+  authenticated reviewer approves it there. This is real identity and a real timestamp, native to
+  GitHub, not something Sprout has to parse or trust self-reported.
+- `check_risk_approval.py` still runs as a deterministic backstop for the *artifact* side (a task
+  claiming R3/R4 must still carry a real `approval_ref`), but the environment gate is what
+  actually proves a human, not a file, made the call. This is a repo-settings change, not a code
+  change — not yet applied to this repo; see the checklist below.
+
+**Merge readiness — binding a PR to a real VERIFIED task.** The same review flagged the bigger
+gap: nothing checked a PR's claimed task against a real `VERIFIED` status, a matching `PASS`
+verification run bound to *this exact commit*, mandatory-check coverage, and valid evidence — a
+code-only PR could pass CI without participating in Sprout's own policy at all. This is relational
+logic across several artifact files (task → run → evidence → commit SHA), not something an
+off-the-shelf GitHub Action or a branch-protection setting can express. Rather than add another
+bespoke Python parser for it, `skills/merge-readiness/SKILL.md` does this judgment as a headless
+Claude Code invocation (`.github/workflows/sprout-merge-readiness.yml`, using
+`anthropics/claude-code-action`) that runs read-only against the PR diff and returns a structured
+`merge_ready`/`reasons` verdict the workflow gates on.
+
+This is a deliberate, named tradeoff: an LLM-judgment gate instead of a deterministic one. It
+avoids maintaining a second brittle parser for Sprout's relational schema, at the cost of being
+non-deterministic — treat a pass from it as informative, not infallible, same caveat the skill
+file states about itself. It also closes a real bypass in `hooks/check-immutable-artifacts.py`:
+that hook only watches Claude's own `Edit`/`Write` tool calls and treats `status` as always
+editable, so `APPROVED → PROPOSED` followed by a body rewrite via any other tool (Bash, a script,
+Codex's `apply_patch`) went through unblocked locally. `merge-readiness` reads the diff itself
+against the PR's base commit, so it catches the same sequence regardless of which tool produced
+it — the hook is correctly scoped down to "local guardrail," this skill is the actual CI-facing
+enforcement boundary.
+
+### GitHub-native settings checklist (not yet applied — repo-settings changes, not code)
+
+These require repo admin access via the GitHub UI or API and were deliberately left out of the
+code changes above, per this repo's own "check with the user before high-blast-radius changes"
+discipline:
+
+- [ ] Add `merge-readiness` to branch protection's required status checks once
+  `ANTHROPIC_API_KEY` is configured as a repo secret and the workflow has run green at least once.
+- [ ] Create a `r3-r4-approval` GitHub Environment with required reviewers, and add a job that
+  targets it for any PR touching an R3/R4-risk task.
+- [ ] Enable secret scanning + push protection (Settings → Code security) — strictly broader
+  coverage than `.github/scripts/check_evidence_redaction.py`'s four regex patterns, maintained by
+  GitHub rather than by this repo.
+- [ ] Add a `CODEOWNERS` file requiring review on `artifacts/`-risk paths and the immutable
+  artifact directories, so the "who can touch this" question doesn't rely on convention alone.
 
 ## 8. CI/CD
 
