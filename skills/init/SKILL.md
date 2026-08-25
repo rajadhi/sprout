@@ -38,7 +38,20 @@ existing project artifacts.
    in `docs/architecture.md` of this plugin.
 8. **Establish verification configuration** — confirm which check types (lint, unit, integration,
    ...) are available in this repo's toolchain; record in `project.yaml`.
-9. **Report exactly what was created.** A flat list of files/directories, nothing implied.
+9. **Offer to install merge enforcement**, not just artifact structure — scaffolding alone doesn't
+   make `merge_policy` (`project.yaml`) a real property of this repo. Ask before copying (this
+   writes into `.github/`, a repo-settings-adjacent area):
+   - Copy this plugin's `.github/workflows/sprout-merge-readiness.yml` into the downstream repo's
+     `.github/workflows/`. A GitHub Actions workflow only runs from the repo it lives in, not from
+     an installed plugin — `skills/merge-readiness/SKILL.md` itself comes for free with the plugin
+     install, but the workflow file that invokes it does not.
+   - Offer a starter `CODEOWNERS` entry requiring review on the artifact directories from step 5
+     (`requirements/ designs/ architecture/`, whichever risk-relevant ones apply).
+   - Point at `docs/architecture.md` §7's GitHub-native settings checklist (branch protection,
+     `ANTHROPIC_API_KEY` secret, an R3/R4 approval Environment, secret scanning) as manual
+     repo-admin steps this skill cannot perform itself.
+10. **Report exactly what was created.** A flat list of files/directories, nothing implied — and
+   which of step 9's offers were accepted vs. declined.
 
 ## Must not
 

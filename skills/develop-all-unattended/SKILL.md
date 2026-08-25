@@ -74,8 +74,9 @@ of the operator."
 
 ## Outcome note
 
-Written once, at the end of the run, to `artifacts/runs/<UTC-timestamp>-develop-all-unattended.md`
-— plain markdown, not a governed artifact. It has no frontmatter schema, doesn't bump
+Written once, at the end of the run, to `.sprout/runs/<UTC-timestamp>-develop-all-unattended.md`
+(the directory `init` actually creates, per `skills/init/SKILL.md` step 5) — plain markdown, not a
+governed artifact. It has no frontmatter schema, doesn't bump
 `project.yaml`'s `schema_version`, and isn't parsed by `/sprout:graph`; it's a session report, not
 an artifact-graph node.
 
