@@ -19,6 +19,13 @@ on:
 jobs:
   merge-readiness:
     runs-on: ubuntu-latest
+    # id-token: write lets claude-code-action fall back to OIDC-based auth when no
+    # ANTHROPIC_API_KEY/CLAUDE_CODE_OAUTH_TOKEN secret is configured; without it the action fails
+    # with an opaque "Could not fetch an OIDC token" error rather than a clear auth message.
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
