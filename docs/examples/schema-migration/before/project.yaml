@@ -1,0 +1,5 @@
+# Synthetic fixture project, schema_version 1 -- see ../MIGRATION.md.
+schema_version: 1
+name: fixture-project
+verification_policy:
+  mandatory_checks: [lint, unit]
