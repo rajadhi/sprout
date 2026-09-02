@@ -86,3 +86,31 @@ jobs:
         run: python3 -m unittest tests.ci.test_check_evidence_redaction -v
       - name: Check every evidence record is redacted with no obvious secrets
         run: python3 .github/scripts/check_evidence_redaction.py
+
+  merge-readiness-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run merge-readiness regression tests
+        run: python3 -m unittest tests.ci.test_check_merge_readiness -v
+      - name: Determine changed-file range for this event
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+          else
+            echo "BASE_SHA=${{ github.event.before }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
+          fi
+      - name: Check task/run/evidence binding and artifact transitions
+        # PR_BODY goes through env:, never spliced into the run: script text -- a PR body is
+        # attacker-controlled text and interpolating it directly into a shell block would be a
+        # script-injection hole.
+        env:
+          SPROUT_PR_BODY: ${{ github.event.pull_request.body }}
+        run: python3 .github/scripts/check_merge_readiness.py
