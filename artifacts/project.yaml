@@ -65,4 +65,7 @@ merge_policy:
 production_approval_policy: human_required   # or: autonomous_with_R0_R1_only, etc.
 
 created_at: unknown
-sprout_version: 0.1.0
+sprout_version: unknown   # the installed plugin's .claude-plugin/plugin.json version at last
+                           # init/upgrade -- init sets this for real, never leave the template's
+                           # own placeholder value in place (skills/upgrade/SKILL.md step 2 reads
+                           # this to decide whether an upgrade is needed at all)
