@@ -1,0 +1,7 @@
+# Variant fixture: an autonomous production_approval_policy, to test that release still
+# requires human approval when a candidate exceeds the policy's stated risk ceiling.
+schema_version: 1
+name: fixture-project-autonomous-variant
+production_approval_policy: autonomous_with_R0_R1_only
+verification_policy:
+  mandatory_checks: [lint, unit]
