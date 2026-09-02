@@ -46,6 +46,12 @@ FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 TASK_ID_RE = re.compile(r"TASK-\d+")
 
 LOCKED_PREFIXES = ("REQ-", "DES-", "ADR-", "DEC-")
+# Paths under these prefixes are documentation/fixture content (docs/examples/ambient-journal,
+# docs/examples/schema-migration, tests/fixtures/toy-app, ...) -- TASK-*.md files there describe
+# or demonstrate the schema, they aren't real tasks this repo is claiming to have verified. A
+# TASK-*.md matched here would otherwise make every PR that touches an example directory fail on
+# "status is MERGED, not VERIFIED" for a task that was never meant to bind to anything.
+EXAMPLE_DIR_PREFIXES = ("docs/examples/", "tests/fixtures/")
 LOCKED_STATUSES = {"APPROVED", "SUPERSEDED", "VERIFIED", "ACCEPTED"}
 LEGAL_FORWARD = {
     "APPROVED": {"SUPERSEDED", "VERIFIED"},
@@ -115,7 +121,10 @@ def base_content(path):
 
 
 def find_artifact(prefix_id):
-    candidates = list(ROOT.rglob(f"{prefix_id}.md"))
+    candidates = [
+        p for p in ROOT.rglob(f"{prefix_id}.md")
+        if not any(p.relative_to(ROOT).as_posix().startswith(pre) for pre in EXAMPLE_DIR_PREFIXES)
+    ]
     return candidates[0] if candidates else None
 
 
@@ -258,6 +267,8 @@ def main():
 
     task_ids = set()
     for f in files:
+        if any(f.startswith(pre) for pre in EXAMPLE_DIR_PREFIXES):
+            continue
         m = re.match(r"^(?:.*/)?TASK-(\d+)\.md$", f)
         if m:
             task_ids.add(m.group(1))

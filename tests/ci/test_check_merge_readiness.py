@@ -185,6 +185,45 @@ class TestMergeReadinessCheck(unittest.TestCase):
             code, out = run_check(tmp, changed_files="REQ-020.md\n", base_root=base)
             self.assertEqual(code, 0)
 
+    def test_example_fixture_task_is_not_treated_as_a_real_claim(self):
+        # Reproduces the real failure hit on PR #24: docs/examples/schema-migration's synthetic
+        # TASK-100.md (status MERGED, not VERIFIED -- it's a fixture, never meant to bind to
+        # anything) made every PR touching it fail with "status is MERGED, not VERIFIED."
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            example_dir = tmp / "docs" / "examples" / "schema-migration" / "before"
+            example_dir.mkdir(parents=True)
+            (example_dir / "TASK-100.md").write_text(
+                "---\nid: TASK-100\nstatus: MERGED\n---\n\nfixture body\n"
+            )
+            code, out = run_check(
+                tmp,
+                changed_files="docs/examples/schema-migration/before/TASK-100.md\n",
+                head_sha="abc123",
+            )
+            self.assertEqual(code, 0)
+            self.assertIn("OK", out)
+
+    def test_example_fixture_task_id_does_not_shadow_a_real_one(self):
+        # A real TASK-100 elsewhere in the tree must still resolve to itself, not to a
+        # same-numbered fixture file under an excluded example directory.
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            (tmp / "artifacts").mkdir()
+            (tmp / "artifacts" / "project.yaml").write_text(PROJECT_YAML)
+            example_dir = tmp / "docs" / "examples" / "schema-migration" / "before"
+            example_dir.mkdir(parents=True)
+            (example_dir / "TASK-100.md").write_text(
+                "---\nid: TASK-100\nstatus: MERGED\n---\n\nfixture body\n"
+            )
+            write_task(tmp, "100", status="VERIFIED", verification_run="RUN-00100")
+            write_run(tmp, "RUN-00100", "100", commit="deadbeef", verdict="PASS",
+                      checks=["lint", "unit"], evidence="[EVD-00100]")
+            write_evidence(tmp, "EVD-00100", "redacted")
+            code, out = run_check(tmp, changed_files="TASK-100.md\n", head_sha="deadbeef")
+            self.assertEqual(code, 0)
+            self.assertIn("OK", out)
+
     def test_no_base_sha_skips(self):
         with tempfile.TemporaryDirectory() as tmp:
             env = dict(os.environ, SPROUT_CHECK_ROOT=str(tmp))
