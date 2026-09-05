@@ -200,7 +200,8 @@ These require repo admin access via the GitHub UI or API and were deliberately l
 code changes above, per this repo's own "check with the user before high-blast-radius changes"
 discipline:
 
-- [ ] Add `merge-readiness-check` to branch protection's required status checks.
+- [ ] Add `merge-readiness-check` and `plugin-version-check` to branch protection's required
+  status checks.
 - [ ] Create a `r3-r4-approval` GitHub Environment with required reviewers, and add a job that
   targets it for any PR touching an R3/R4-risk task.
 - [ ] Enable secret scanning + push protection (Settings → Code security) — strictly broader
@@ -220,8 +221,13 @@ it validates the plugin itself: `validate-structure` runs
 `.github/scripts/validate_structure.py`, a small deterministic script (checks plugin manifest is
 valid JSON, every skill/agent has required frontmatter — the kind of check §5 calls a hook
 candidate, implemented here as a CI step since it needs to run on every push/PR, not just
-locally); `toy-app-tests` runs the real unit tests in `tests/fixtures/toy-app`. Both required
-status checks for branch protection.
+locally); `toy-app-tests` runs the real unit tests in `tests/fixtures/toy-app`;
+`plugin-version-check` runs `.github/scripts/check_plugin_version_bump.py`, requiring
+`.claude-plugin/plugin.json`'s `version` to increase whenever a PR touches significant plugin
+content (`skills/`, `agents/`, `hooks/`, `.github/scripts/`, `.github/workflows/`, `artifacts/`,
+`CODEOWNERS`) — added after this repo shipped real feature content twice without bumping the
+version, which silently broke update detection for anyone with an existing install (see
+CLAUDE.md's Framework governance section). All required status checks for branch protection.
 
 **Downstream projects Sprout is installed into** get the fuller pipeline described in the
 original design brief and still the right default to recommend: lint → typecheck → unit →
