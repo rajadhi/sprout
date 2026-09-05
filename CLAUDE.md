@@ -16,6 +16,14 @@ Sprout changes are stricter than the application changes Sprout helps other proj
 - **Policy change** (autonomy, task-sizing, verification, evidence, merge — the fields in
   `artifacts/project.yaml`) → needs explicit rationale in the commit message, not a silent edit.
 - **Verification change** → regression-check against existing scenarios before merging.
+- **Significant plugin change** (`skills/`, `agents/`, `hooks/`, `.github/scripts/`,
+  `.github/workflows/`, `artifacts/`, `CODEOWNERS`) → bump `.claude-plugin/plugin.json`'s
+  `version`. Default to a patch bump; bump minor or major only when explicitly asked to. This
+  isn't optional convention — a real user hit the actual failure mode twice (shipped content
+  with no version bump means Claude Code's plugin manager sees "already installed, nothing
+  changed" and never refreshes an existing install, even after an explicit marketplace/plugin
+  update and a forced reload) before `.github/scripts/check_plugin_version_bump.py` made it a
+  required CI check instead of a thing to remember.
 
 Never let Sprout silently weaken its own verification rules.
 

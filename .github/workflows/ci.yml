@@ -114,3 +114,26 @@ jobs:
         env:
           SPROUT_PR_BODY: ${{ github.event.pull_request.body }}
         run: python3 .github/scripts/check_merge_readiness.py
+
+  plugin-version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run plugin version bump regression tests
+        run: python3 -m unittest tests.ci.test_check_plugin_version_bump -v
+      - name: Determine changed-file range for this event
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+          else
+            echo "BASE_SHA=${{ github.event.before }}" >> "$GITHUB_ENV"
+            echo "HEAD_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
+          fi
+      - name: Check significant plugin changes bump plugin.json's version
+        run: python3 .github/scripts/check_plugin_version_bump.py
