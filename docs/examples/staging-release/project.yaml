@@ -1,0 +1,7 @@
+# Synthetic fixture project for dogfooding /sprout:release -- see ../MIGRATION.md's sibling,
+# RELEASE.md, in this directory.
+schema_version: 1
+name: fixture-project
+production_approval_policy: human_required
+verification_policy:
+  mandatory_checks: [lint, unit]

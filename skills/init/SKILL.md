@@ -17,7 +17,9 @@ existing project artifacts.
 
 1. **Detect repo state.** New or existing repository? Already Sprout-initialized (check for
    `.sprout/project.yaml`)? If already initialized, report current state and stop — do not
-   re-scaffold.
+   re-scaffold. Point at `/sprout:upgrade` instead: that's the re-runnable path for bringing an
+   already-initialized project's schema and tooling up to date with the currently installed
+   plugin version, not this skill.
 2. **Inspect the repository.** Read existing README, package manifests, CI config — infer what you
    can (platforms, stack) rather than asking for everything.
 3. **Ask only for genuinely unresolved context**, from: project name, purpose, platforms,
@@ -27,6 +29,9 @@ existing project artifacts.
 4. **Create the project profile** at `.sprout/project.yaml`, copied from
    `artifacts/project.yaml` in this plugin, filled with what you learned. Keep the shipped policy
    defaults (autonomy, task-sizing, verification, evidence, merge) unless the human overrides one.
+   Set `sprout_version` to the installed plugin's actual `.claude-plugin/plugin.json` version —
+   never leave the template's own `unknown` placeholder in place here; `/sprout:upgrade` reads
+   this field to decide whether a later upgrade is even needed.
 5. **Establish artifact directories** in the downstream repo:
    ```
    .sprout/{approvals,state,graph,runs}/

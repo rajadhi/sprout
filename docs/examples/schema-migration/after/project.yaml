@@ -1,0 +1,7 @@
+# Deliberately UNCHANGED from before/project.yaml -- migrate's step 7 forbids bumping
+# schema_version until every affected artifact has migrated. RUN-00100 is still blocked
+# (see ../MIGRATION.md), so this file must still read schema_version: 1, not 2.
+schema_version: 1
+name: fixture-project
+verification_policy:
+  mandatory_checks: [lint, unit]
